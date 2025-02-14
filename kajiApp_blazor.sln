@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kajiApp_blazor", "kajiApp_blazor\kajiApp_blazor.csproj", "{8D1F94D2-78B8-43A9-8835-74BC6603CAA7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D1F94D2-78B8-43A9-8835-74BC6603CAA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D1F94D2-78B8-43A9-8835-74BC6603CAA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D1F94D2-78B8-43A9-8835-74BC6603CAA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D1F94D2-78B8-43A9-8835-74BC6603CAA7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CE9B90F8-A67A-4A02-9AA3-4DE04C89EEC4}
+	EndGlobalSection
+EndGlobal
