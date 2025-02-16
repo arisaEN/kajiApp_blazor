@@ -1,4 +1,4 @@
-﻿namespace kajiApp_blazor.Components.Models
+﻿namespace kajiApp_blazor.Components.Models.HomeModel
 {
     public class Work
     {

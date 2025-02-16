@@ -1,71 +1,46 @@
 ﻿@page "/"
-@using kajiApp_blazor.Components.Models;
-@using kajiApp_blazor.Components.Data
-@* @rendermode InteractiveServer *@
+@using kajiApp_blazor.Components.Component
+@using kajiApp_blazor.Components.Models.HomeModel
+@using kajiApp_blazor.Components.Data.HomeData
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
+@using kajiApp_blazor.Components
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IConfiguration Configuration
 
-@* DataServiceのインスタンスが生成される。コンストラクタが走る *@
-@* IDすることでDataServiceはnewしなくてもインスタンスが使えるようになる *@
-@inject DataService DataService
+
+
 
 <div class="container mt-4 bg-black min-vh-100 py-4">
     <div class="bg-black text-light text-center py-3">
+        <h3 class="mb-0 border-bottom border-secondary pb-2">実績入力フォーム</h3>
+    </div>
+    <WorkForm TodayWorkRegistration="todayworkregistration" />
+
+    <div class="bg-black text-light text-center py-3 mt-4">
         <h3 class="mb-0 border-bottom border-secondary pb-2">Work List</h3>
     </div>
-    <div class="card bg-dark text-white shadow-lg rounded">
-        <div class="card-body">
-            @if (works == null)
-            {
-                <div class="d-flex justify-content-center">
-                    <div class="spinner-border text-light" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="table-responsive">
-                    <table class="table table-dark table-striped table-hover text-center">
-                        <thead class="table-light text-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Day</th>
-                                <th>Name</th>
-                                <th>Work</th>
-                                <th>Percent</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @* Task<List<Work>>(インスタンス"works"") の中から1明細1データずつテーブルに代入*@
-                            @foreach (var work in works)
-                            {
-                                <tr>
-                                    <td>@work.Id</td>
-                                    <td>@work.Day.ToShortDateString()</td>
-                                    <td>@work.Name</td>
-                                    <td>@work.WorkName</td>
-                                    <td>@work.Percent %</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-        </div>
-    </div>
+    <WorkList Works="works" />
 </div>
 
 @code {
-    private List<Work>? works=null;
+    private List<Work>? works = null;
+    //インスタンス生成で入力フォームに使うNameListとWorkList作成
+    private TodayWorkRegistration todayworkregistration = new TodayWorkRegistration();
 
     protected override async Task OnInitializedAsync()
     {
+        //家事実績リストをDBから持ってくる。入力フォームさえできてればOKなので非同期で取得する
+        _ = LoadWorksAsync();
+        Console.WriteLine("終わったよ");
+    }
 
-        //DataService.GetWorksが完了するまでプログラムは進まない
-        //非同期なのでUIは変更する。
-        // await Task.Delay(2000);
-        // works = await Task.Run(() => DataService.GetWorks());
-        works = await DataService.GetWorks();
-
+    private async Task LoadWorksAsync()
+    {
+        works = await WorkListShow.GetWorksAsync();
+        if (works != null)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 }

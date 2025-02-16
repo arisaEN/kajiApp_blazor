@@ -1,10 +1,11 @@
 using kajiApp_blazor.Components;
-using kajiApp_blazor.Components.Data;
+using kajiApp_blazor.Components.Data.HomeData;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ProtectedSessionStorage>();
-builder.Services.AddScoped<DataService>();
+//builder.Services.AddScoped<WorkListShow>();
+builder.Services.AddHttpClient();
 
 
 // Add services to the container.

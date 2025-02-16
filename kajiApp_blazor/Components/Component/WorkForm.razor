@@ -1,0 +1,67 @@
+﻿@using kajiApp_blazor.Components.Models.HomeModel
+@using kajiApp_blazor.Components.Data.HomeData
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="card bg-dark text-white shadow-lg rounded">
+    <div class="card-body">
+        <EditForm Model="FormModel" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <input type="hidden" @bind="FormModel.WorkId" />
+            <input type="hidden" @bind="FormModel.WorkName" />
+
+            <div class="mb-3">
+                <label for="dateInput" class="form-label">日付</label>
+                <InputDate id="dateInput" class="form-control" @bind-Value="FormModel.Day" />
+            </div>
+
+            <div class="mb-3">
+                <label for="name" class="form-label">名前</label>
+                <InputSelect id="name" class="form-select" @bind-Value="FormModel.Name">
+                    @foreach (var name in TodayWorkRegistration.NameList)
+                    {
+                        <option value="@name">@name</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="mb-3">
+                <label for="workSelect" class="form-label">家事名</label>
+                <InputSelect id="workSelect" class="form-select" @bind-Value="FormModel.WorkId" @onchange="TodayWorkRegistration.UpdateWorkName">
+                    @foreach (var work in TodayWorkRegistration.WorkList)
+                    {
+                        <option value="@work.Id">@work.Name</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">何割?</label>
+                <div>
+                    <InputRadioGroup @bind-Value="FormModel.Percent">
+                        <InputRadio id="percent50" class="form-check-input" Value="50" /><label for="percent50">50%</label>
+                        <InputRadio id="percent100" class="form-check-input" Value="100" /><label for="percent100">100%</label>
+                    </InputRadioGroup>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">登録</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    //ここらへんよくわかってない
+    [Parameter] public TodayWorkRegistration TodayWorkRegistration { get; set; } = default!;
+    private TodayWork FormModel
+    {get
+        {return TodayWorkRegistration.FormModel;}
+    }
+
+    private async Task HandleSubmit()
+    {
+        await TodayWorkRegistration.SaveToDatabaseAsync();
+        Console.WriteLine("データを登録しました");
+    }
+}

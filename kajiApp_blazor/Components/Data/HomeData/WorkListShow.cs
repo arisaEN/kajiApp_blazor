@@ -1,15 +1,17 @@
-﻿using kajiApp_blazor.Components.Models;
+﻿using kajiApp_blazor.Components.Models.HomeModel;
 using Microsoft.Data.Sqlite;
 
-namespace kajiApp_blazor.Components.Data
+namespace kajiApp_blazor.Components.Data.HomeData
+
 {
-    public class DataService
+    public static class WorkListShow
     {
-        private readonly string _connectionString = "Data Source=database.db";
+        private static readonly string _connectionString = "Data Source=database.db";
 
         //非同期版
-        public async Task<List<Work>> GetWorks() // ✅ 非同期メソッド
+        public static async Task<List<Work>> GetWorksAsync() // ✅ 非同期メソッド
         {
+            await Task.Delay(2000);
             using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync(); // ✅ OpenAsync() を使う
 
