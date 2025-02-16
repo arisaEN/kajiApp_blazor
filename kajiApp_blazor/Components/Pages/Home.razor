@@ -18,13 +18,13 @@
     <WorkForm TodayWorkRegistration="todayworkregistration" />
 
     <div class="bg-black text-light text-center py-3 mt-4">
-        <h3 class="mb-0 border-bottom border-secondary pb-2">Work List</h3>
+        <h3 class="mb-0 border-bottom border-secondary pb-2">実績一覧</h3>
     </div>
     <WorkList Works="works" />
 </div>
 
 @code {
-    private List<Work>? works = null;
+    private List<Models.HomeModel.WorkList>? works = null;
     //インスタンス生成で入力フォームに使うNameListとWorkList作成
     private TodayWorkRegistration todayworkregistration = new TodayWorkRegistration();
 

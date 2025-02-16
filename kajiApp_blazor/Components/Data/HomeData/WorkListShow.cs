@@ -9,7 +9,7 @@ namespace kajiApp_blazor.Components.Data.HomeData
         private static readonly string _connectionString = "Data Source=database.db";
 
         //非同期版
-        public static async Task<List<Work>> GetWorksAsync() // ✅ 非同期メソッド
+        public static async Task<List<WorkList>> GetWorksAsync() // ✅ 非同期メソッド
         {
             await Task.Delay(2000);
             using var connection = new SqliteConnection(_connectionString);
@@ -20,13 +20,13 @@ namespace kajiApp_blazor.Components.Data.HomeData
                                   "WHERE day BETWEEN DATE('now', '-1 day') " +
                                   "AND DATE('now') ORDER BY id DESC LIMIT 15";
 
-            var works = new List<Work>();
+            var works = new List<WorkList>();
             //sqliteのExecuteReaderAsyncは1明細ずつ取得する仕組みらしい
             using var reader = await command.ExecuteReaderAsync(); // ✅ 非同期実行
             //データをある分だけ1明細ずつ取得 
             while (await reader.ReadAsync()) // ✅ 非同期読み取り
             {
-                works.Add(new Work
+                works.Add(new WorkList
                 {
                     Id = reader.GetInt32(0),
                     Day = reader.GetDateTime(1),

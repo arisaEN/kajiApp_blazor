@@ -1,6 +1,6 @@
 ﻿namespace kajiApp_blazor.Components.Models.HomeModel
 {
-    public class Work
+    public class WorkList
     {
         public int Id { get; set; }
         public DateTime Day { get; set; }
