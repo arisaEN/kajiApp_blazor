@@ -11,7 +11,7 @@ namespace kajiApp_blazor.Components.Data.HomeData
         //非同期版
         public static async Task<List<WorkList>> GetWorksAsync() // ✅ 非同期メソッド
         {
-            await Task.Delay(2000);
+            await Task.Delay(1000);
             using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync(); // ✅ OpenAsync() を使う
 
@@ -38,7 +38,7 @@ namespace kajiApp_blazor.Components.Data.HomeData
             return works; // ✅ 戻り値を Task<List<Work>> にする
         }
 
-        // 他のデータ取得メソッドも同様に実装
+
     }
 
 

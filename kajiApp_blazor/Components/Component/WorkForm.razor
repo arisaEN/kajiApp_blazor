@@ -1,6 +1,7 @@
-﻿﻿@using kajiApp_blazor.Components.Models.HomeModel
+﻿@using kajiApp_blazor.Components.Models.HomeModel
 @using kajiApp_blazor.Components.Data.HomeData
 @using Microsoft.AspNetCore.Components.Forms
+
 
 <div class="card bg-dark text-white shadow-lg rounded">
     <div class="card-body">
@@ -53,23 +54,49 @@
 
 @code {
     //ここらへんよくわかってない //変数の名前とクラスの名前違うようにする
+    private bool isLoading = false; // ローディング状態を管理
     [Parameter] public TodayWorkRegistration TodayWorkRegistration { get; set; } = default!;
+    [Inject] private AppState AppState { get; set; } = default!;
     private TodayWork FormModel
-    {
-        get
-        { return TodayWorkRegistration.FormModel; }
+    {get
+        {return TodayWorkRegistration.FormModel;}
     }
 
     private async Task HandleSubmit()
     {
-        // WorkId から WorkName を取得
-        var selectedWork = TodayWorkRegistration.WorkList.FirstOrDefault(w => w.Id == FormModel.WorkId);
-        if (selectedWork != null)
+        try
         {
-            FormModel.WorkName = selectedWork.Name;
-        }
+            isLoading = true; // ローディング開始
 
-        await TodayWorkRegistration.SaveToDatabaseAsync();
-        Console.WriteLine("データを登録しました");
+            // WorkId から WorkName を取得
+            var selectedWork = TodayWorkRegistration.WorkList
+                                .FirstOrDefault(w => w.Id == FormModel.WorkId);
+
+            if (selectedWork != null)
+            {
+                FormModel.WorkName = selectedWork.Name;
+            }
+            else
+            {
+                Console.WriteLine($"WorkId {FormModel.WorkId} に対応する WorkName が見つかりません");
+                return; // 該当する WorkName がない場合は処理終了
+            }
+
+            // データベースに登録
+            await TodayWorkRegistration.SaveToDatabaseAsync();
+            Console.WriteLine("データを登録しました");
+
+            // 他のコンポーネントに更新を通知
+            AppState.NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"データ登録中にエラーが発生しました: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false; // ローディング終了
+            await InvokeAsync(StateHasChanged); // UI 更新
+        }
     }
-}  
+}
