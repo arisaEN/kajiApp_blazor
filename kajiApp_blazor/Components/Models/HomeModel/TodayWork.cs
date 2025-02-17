@@ -5,6 +5,7 @@ namespace kajiApp_blazor.Components.Models.HomeModel
         public int WorkId { get; set; }
         public string WorkName { get; set; } = "";
         public DateTime Day { get; set; } = DateTime.Today;
+
         public string Name { get; set; } = "";
         public int Percent { get; set; } = 100;
     }

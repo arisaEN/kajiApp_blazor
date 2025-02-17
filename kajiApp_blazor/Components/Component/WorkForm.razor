@@ -1,4 +1,4 @@
-﻿@using kajiApp_blazor.Components.Models.HomeModel
+﻿﻿@using kajiApp_blazor.Components.Models.HomeModel
 @using kajiApp_blazor.Components.Data.HomeData
 @using Microsoft.AspNetCore.Components.Forms
 
@@ -55,13 +55,21 @@
     //ここらへんよくわかってない //変数の名前とクラスの名前違うようにする
     [Parameter] public TodayWorkRegistration TodayWorkRegistration { get; set; } = default!;
     private TodayWork FormModel
-    {get
-        {return TodayWorkRegistration.FormModel;}
+    {
+        get
+        { return TodayWorkRegistration.FormModel; }
     }
 
     private async Task HandleSubmit()
     {
+        // WorkId から WorkName を取得
+        var selectedWork = TodayWorkRegistration.WorkList.FirstOrDefault(w => w.Id == FormModel.WorkId);
+        if (selectedWork != null)
+        {
+            FormModel.WorkName = selectedWork.Name;
+        }
+
         await TodayWorkRegistration.SaveToDatabaseAsync();
         Console.WriteLine("データを登録しました");
     }
-}
+}  

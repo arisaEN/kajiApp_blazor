@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ProtectedSessionStorage>();
 //builder.Services.AddScoped<WorkListShow>();
 builder.Services.AddHttpClient();
-
+builder.Services.AddSingleton<AppState>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

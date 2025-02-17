@@ -19,49 +19,53 @@ namespace kajiApp_blazor.Components.Data.HomeData
     {
         private const string DatabaseFile = "database.db";
         private static readonly string ConnectionString = "Data Source=" + DatabaseFile + ";";
-        private static readonly string _connectionString = "Data Source=database.db";  // DB接続文字列
 
-        //インスタンス生成ででフォームに使うNameListとWorkList作成
-        //2025.2.16 ダミーデータを使用。ほんとはDBからデータを持ってくる。
         public TodayWork FormModel { get; private set; } = new TodayWork();
-        //名前リスト作成
-        public List<string> NameList { get; } = new() { "田中", "佐藤", "鈴木" };
 
+        // 名前リスト作成（DBから取得）
+        public List<string> NameList { get; private set; } = new();
 
-        //public static async Task<List<string>> GetNameListAsync()
-        //{
-        //    await Task.Delay(2000);  // 例として遅延を追加
-        //    using var connection = new SQLiteConnection(_connectionString);
-        //    await connection.OpenAsync(); // 非同期で接続
+        // 仕事リスト作成（DBから取得）
+        public List<WorkItem> WorkList { get; private set; } = new();
 
-        //    var command = connection.CreateCommand();
-        //    command.CommandText = "SELECT name FROM nameList"; // SQLクエリ
-
-        //    var nameList = new List<string>();
-
-        //    using var reader = await command.ExecuteReaderAsync(); // 非同期で読み取る
-        //    while (await reader.ReadAsync()) // 非同期で1行ずつ読み取る
-        //    {
-        //        nameList.Add(reader.GetString(0));  // 名前をリストに追加
-        //    }
-
-        //    return nameList;  // 非同期メソッドとしてリストを返す
-        //}
-
-
-
-
-
-
-
-        //仕事リスト作成
-        public List<WorkItem> WorkList { get; } = new List<WorkItem>()
+        /// <summary>
+        /// コンストラクタでDBからリストに値を入れて親に返す
+        /// </summary>
+        public TodayWorkRegistration()
         {
-            new(1, "掃除"),
-            new(2, "洗濯"),
-            new(3, "料理")
-        };
-         
+            LoadDataFromDatabase();
+        }
+
+        private void LoadDataFromDatabase()
+        {
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                connection.Open();
+
+                // NameListの取得
+                using (var command = new SQLiteCommand("SELECT name FROM nameList", connection))
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        NameList.Add(reader.GetString(0));
+                    }
+                }
+
+                // WorkListの取得
+                using (var command = new SQLiteCommand("SELECT work_id, workName FROM workList", connection))
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        WorkList.Add(new WorkItem(reader.GetInt32(0), reader.GetString(1)));
+                    }
+                }
+            }
+        }
+
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -81,23 +85,38 @@ namespace kajiApp_blazor.Components.Data.HomeData
         /// <returns></returns>
         public async Task SaveToDatabaseAsync()
         {
-            await using var connection = new SqliteConnection(ConnectionString);
-            await connection.OpenAsync();
+            try
+            {
+                using var connection = new SQLiteConnection(ConnectionString);
+                await connection.OpenAsync();
 
-            string insertQuery = @"
-            INSERT INTO works (work_id, work_name, day, name, percent)
-            VALUES (@work_id, @work_name, @day, @name, @percent);";
+                using var command = new SQLiteCommand(
+                    "INSERT INTO works (day, name, work_id, work, percent) VALUES (@day, @name, @work_id, @work_name, @percent)",
+                    connection);
 
-            await using var command = new SqliteCommand(insertQuery, connection);
-            command.Parameters.AddWithValue("@work_id", FormModel.WorkId);
-            command.Parameters.AddWithValue("@work_name", FormModel.WorkName);
-            command.Parameters.AddWithValue("@day", FormModel.Day.ToString("yyyy-MM-dd"));
-            command.Parameters.AddWithValue("@name", FormModel.Name);
-            command.Parameters.AddWithValue("@percent", FormModel.Percent);
+                command.Parameters.AddWithValue("@day", FormModel.Day.ToString("yyyy-MM-dd"));
 
-            await command.ExecuteNonQueryAsync();
+
+                command.Parameters.AddWithValue("@name", FormModel.Name);
+                command.Parameters.AddWithValue("@work_id", FormModel.WorkId);
+                command.Parameters.AddWithValue("@work_name", FormModel.WorkName);
+                command.Parameters.AddWithValue("@percent", FormModel.Percent);
+
+                await command.ExecuteNonQueryAsync();
+
+                Console.WriteLine("データを登録しました");
+            }
+            catch (SQLiteException ex)
+            {
+                Console.WriteLine($"SQLite エラー: {ex.Message}");
+                Console.WriteLine($"スタックトレース: {ex.StackTrace}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"予期しないエラー: {ex.Message}");
+                Console.WriteLine($"スタックトレース: {ex.StackTrace}");
+            }
         }
-    }
 
-   
+    }
 }
