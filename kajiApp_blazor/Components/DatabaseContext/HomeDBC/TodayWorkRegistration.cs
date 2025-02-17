@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,11 +19,41 @@ namespace kajiApp_blazor.Components.Data.HomeData
     {
         private const string DatabaseFile = "database.db";
         private static readonly string ConnectionString = "Data Source=" + DatabaseFile + ";";
+        private static readonly string _connectionString = "Data Source=database.db";  // DB接続文字列
+
         //インスタンス生成ででフォームに使うNameListとWorkList作成
         //2025.2.16 ダミーデータを使用。ほんとはDBからデータを持ってくる。
         public TodayWork FormModel { get; private set; } = new TodayWork();
         //名前リスト作成
         public List<string> NameList { get; } = new() { "田中", "佐藤", "鈴木" };
+
+
+        //public static async Task<List<string>> GetNameListAsync()
+        //{
+        //    await Task.Delay(2000);  // 例として遅延を追加
+        //    using var connection = new SQLiteConnection(_connectionString);
+        //    await connection.OpenAsync(); // 非同期で接続
+
+        //    var command = connection.CreateCommand();
+        //    command.CommandText = "SELECT name FROM nameList"; // SQLクエリ
+
+        //    var nameList = new List<string>();
+
+        //    using var reader = await command.ExecuteReaderAsync(); // 非同期で読み取る
+        //    while (await reader.ReadAsync()) // 非同期で1行ずつ読み取る
+        //    {
+        //        nameList.Add(reader.GetString(0));  // 名前をリストに追加
+        //    }
+
+        //    return nameList;  // 非同期メソッドとしてリストを返す
+        //}
+
+
+
+
+
+
+
         //仕事リスト作成
         public List<WorkItem> WorkList { get; } = new List<WorkItem>()
         {
