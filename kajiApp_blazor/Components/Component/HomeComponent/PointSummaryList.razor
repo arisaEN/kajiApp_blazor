@@ -1,5 +1,57 @@
-﻿<h3>PointSummaryList</h3>
+﻿@inject IJSRuntime JS
+@using kajiApp_blazor.Components.Models.HomeModel
+@using kajiApp_blazor.Components.DatabaseContext.HomeDBC
+
+
+<h2 class="mt-5">人ごとの合計ポイント</h2>
+<h3 class="text-muted">@MonthName</h3>
+
+@if (AnalysisResults.Any())
+{
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>名前</th>
+                <th>合計ポイント</th>
+                <th>割合</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var result in AnalysisResults)
+            {
+                <tr>
+                    <td>@result.Name</td>
+                    <td>@result.TotalPoints</td>
+                    <td>@result.Percentage%</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">データがありません。</p>
+}
+
+<div class="my-5">
+    <canvas id="lineChart"></canvas>
+    <canvas id="monthlyLineChart" class="mt-4"></canvas>
+</div>
 
 @code {
+    [Parameter]
+    public List<PointSummary> AnalysisResults { get; set; } = new();
 
+    [Parameter]
+    public DateTime CurrentDateTime { get; set; } = DateTime.Now;
+
+    private string MonthName => CurrentDateTime.ToString("MMMM", new System.Globalization.CultureInfo("ja-JP"));
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("renderCharts", AnalysisResults);
+        }
+    }
 }

@@ -1,5 +1,5 @@
 using kajiApp_blazor.Components;
-using kajiApp_blazor.Components.Data.HomeData;
+using kajiApp_blazor.Components.DatabaseContext.HomeDBC;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 var builder = WebApplication.CreateBuilder(args);

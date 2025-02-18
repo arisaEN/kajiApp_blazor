@@ -1,7 +1,7 @@
 ﻿using kajiApp_blazor.Components.Models.HomeModel;
 using Microsoft.Data.Sqlite;
 
-namespace kajiApp_blazor.Components.Data.HomeData
+namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
 
 {
     public  class WorkListShow
