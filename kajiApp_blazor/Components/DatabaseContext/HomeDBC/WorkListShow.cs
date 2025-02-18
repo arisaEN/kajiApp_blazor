@@ -4,14 +4,13 @@ using Microsoft.Data.Sqlite;
 namespace kajiApp_blazor.Components.Data.HomeData
 
 {
-    public static class WorkListShow
+    public  class WorkListShow
     {
-        private static readonly string _connectionString = "Data Source=database.db";
-
+        private  readonly string _connectionString = "Data Source=database.db";
         //非同期版
-        public static async Task<List<WorkList>> GetWorksAsync() // ✅ 非同期メソッド
+        public  async Task<List<WorkList>> GetWorksAsync() // ✅ 非同期メソッド
         {
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
             using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync(); // ✅ OpenAsync() を使う
 
@@ -37,7 +36,6 @@ namespace kajiApp_blazor.Components.Data.HomeData
             }
             return works; // ✅ 戻り値を Task<List<Work>> にする
         }
-
 
     }
 
@@ -72,7 +70,6 @@ namespace kajiApp_blazor.Components.Data.HomeData
     //    }
 
     //}
-
 
 
 }

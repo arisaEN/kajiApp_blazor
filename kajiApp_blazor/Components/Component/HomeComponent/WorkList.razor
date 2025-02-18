@@ -57,7 +57,7 @@
 
     protected override void OnInitialized()
     {
-        // 非同期メソッドを void でラップして登録
+        // 非同期バックグラウンドでリスト取得を実行　
         AppState.OnChange += async () => await ReloadData();
         _ = ReloadData(); // 初回データ読み込み
     }
@@ -68,7 +68,8 @@
         {
             isLoading = true; // ローディング開始
             await InvokeAsync(StateHasChanged); // UI更新
-            Works = await WorkListShow.GetWorksAsync();
+            var workListShow = new WorkListShow();
+            Works = await workListShow.GetWorksAsync();
         }
         catch (Exception ex)
         {

@@ -64,12 +64,13 @@
 </div>
 
 @code {
+    //フォーム初期化
     private bool isLoading = false; // ローディング状態を管理
     [Parameter] public TodayWorkRegistration TodayWorkRegistration { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;
 
     private TodayWork FormModel => TodayWorkRegistration.FormModel;
-
+    //登録ボタン
     private async Task HandleSubmit()
     {
         try
