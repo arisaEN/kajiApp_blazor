@@ -1,6 +1,6 @@
 ﻿namespace kajiApp_blazor.Components.Models.HomeModel
 {
-    public class AnalysisResult
+    public class PointSummary
     {
         public string Name { get; set; }
         public double TotalPoints { get; set; }
