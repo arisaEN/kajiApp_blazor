@@ -19,13 +19,13 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
                                   "WHERE day BETWEEN DATE('now', '-5 day') " +
                                   "AND DATE('now') ORDER BY id DESC LIMIT 15";
 
-            var works = new List<WorkList>();
+            var worklist = new List<WorkList>();
             //sqliteのExecuteReaderAsyncは1明細ずつ取得する仕組みらしい
             using var reader = await command.ExecuteReaderAsync(); // ✅ 非同期実行
             //データをある分だけ1明細ずつ取得 
             while (await reader.ReadAsync()) // ✅ 非同期読み取り
             {
-                works.Add(new WorkList
+                worklist.Add(new WorkList
                 {
                     Id = reader.GetInt32(0),
                     Day = reader.GetDateTime(1),
@@ -34,7 +34,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
                     Percent = reader.GetDouble(4)
                 });
             }
-            return works; // ✅ 戻り値を Task<List<Work>> にする
+            return worklist; // ✅ 戻り値を Task<List<Work>> にする
         }
 
     }

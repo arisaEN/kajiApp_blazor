@@ -2,7 +2,6 @@
 @using kajiApp_blazor.Components.Component.HomeComponent
 @using kajiApp_blazor.Components.Models.HomeModel
 @using kajiApp_blazor.Components.DatabaseContext.HomeDBC
-@using kajiApp_blazor.Components.DatabaseContext.HomeDBC
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @using kajiApp_blazor.Components
 @inject NavigationManager Navigation
@@ -27,7 +26,7 @@
     </div>
 
     <div class="px-3">
-        <WorkList Works="works" />
+        <WorkList WorkList="worklist" />
     </div>
 
     <div class="text-center py-3 mt-4 border-bottom border-secondary">
@@ -35,13 +34,14 @@
     </div>
 
     <div class="px-3">
-        <PointSummaryList PointSumList="pointSumList" />
+        <PointSummary PointSummary="pointsummary" />
     </div>
 </div>
 
 @code {
-    private List<Models.HomeModel.WorkList>? works = null;
-    private List<Models.HomeModel.PointSummary>? pointSumList = null;
+    //フィールド初期化
+    private List<Models.HomeModel.WorkList>? worklist = null;
+    private List<Models.HomeModel.PointSummary>? pointsummary = null;
     //インスタンス生成で入力フォームに使うNameListとWorkList作成
     private TodayWorkRegistration todayworkregistration = new TodayWorkRegistration();
 
@@ -51,24 +51,33 @@
         //家事実績リストをDBから持ってくる。入力フォームさえできてればOKなので非同期で取得する
         _ = LoadWorksAsync();
         _ = PointSummaryAsync();
-        
+
     }
+    /// <summary>
+    ///家事実績リスト取得非同期
+    /// </summary>
+    /// <returns></returns>
     private async Task LoadWorksAsync()
     {
         var workListShow = new WorkListShow();
-        works = await workListShow.GetWorksAsync();
-        if (works != null)
+        worklist = await workListShow.GetWorksAsync();
+        if (worklist != null)
         {
+            //worklistに値が入ったらUI更新
             await InvokeAsync(StateHasChanged);
         }
     }
-
+    /// <summary>
+    /// 家事合計ポイント取得非同期
+    /// </summary>
+    /// <returns></returns>
     private async Task PointSummaryAsync()
     {
         var pointSummaryShow = new PointSummaryShow();
-        pointSumList = await pointSummaryShow.GetPointSumListAsync();
-        if  (pointSumList != null)
+        pointsummary = await pointSummaryShow.GetPointSumListAsync();
+        if (pointsummary != null)
         {
+            //pointに値が入ったらUI更新
             await InvokeAsync(StateHasChanged);
         }
     }

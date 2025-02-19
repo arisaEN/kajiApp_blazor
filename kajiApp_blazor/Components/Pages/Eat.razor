@@ -1,64 +1,77 @@
 ﻿@page "/eat"
-@attribute [StreamRendering]
+@using kajiApp_blazor.Components.Component.HomeComponent
+@using kajiApp_blazor.Components.Models.HomeModel
+@using kajiApp_blazor.Components.DatabaseContext.HomeDBC
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
+@using kajiApp_blazor.Components
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IConfiguration Configuration
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>食費</PageTitle>
 
-<h1>Weather</h1>
 
-<p>This component demonstrates showing data.</p>
 
-@if (forecasts == null)
+<h1 class="fas fa-utensils text-center mb-4 mt-4">食費記録一覧</h1>
+
+@if (records == null)
 {
-    <p><em>Loading...</em></p>
+    <p>データを読み込み中...</p>
+}
+else if (!records.Any())
+{
+    <p class="text-center text-muted">データがありません</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped w-100 eat-table">
+            <thead class="table-dark text-center">
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <th>年</th>
+                    <th>月</th>
+                    <th>金額</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var record in records)
+                {
+                    <tr class="text-center">
+                        <td>@record.Year</td>
+                        <td>@record.Month</td>
+                        <td>@record.Amount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
+<div class="text-center mt-4">
+    <a href="/" class="btn btn-secondary">家事実績入力一覧へ戻る</a>
+</div>
+
 @code {
-    private WeatherForecast[]? forecasts;
+    private List<EatRecord> records;
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
+        using var dbContext = await DbFactory.CreateDbContextAsync();
+        records = await dbContext.EatDetails
+            .GroupBy(e => new { e.Year, e.Month })
+            .Select(g => new EatRecord
+                {
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    Amount = g.Count()
+                })
+            .ToListAsync();
     }
 
-    private class WeatherForecast
+    private class EatRecord
     {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public int Amount { get; set; }
     }
 }
