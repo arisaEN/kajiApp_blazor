@@ -13,19 +13,30 @@
 
 
 
-<div class="container m-0 p-0 bg-black min-vh-100">
-    <div class="bg-black text-light text-center py-3">
-        <h3 class="mb-0 border-bottom border-secondary pb-2">実績入力フォーム</h3>
+<div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
+    <div class="text-center py-3 border-bottom border-secondary">
+        <h3 class="mb-0 pb-2">実績入力フォーム</h3>
     </div>
-    <WorkForm TodayWorkRegistration="todayworkregistration" />
 
-    <div class="bg-black text-light text-center py-3 mt-4">
-        <h3 class="mb-0 border-bottom border-secondary pb-2">実績一覧</h3>
+    <div class="px-3">
+        <WorkForm TodayWorkRegistration="todayworkregistration" />
     </div>
-    <WorkList Works="works" />
-    @* ここおかしい *@
-    @* <PointSummaryList PointSummaryShow="pointSummaryShow" /> *@
-    
+
+    <div class="text-center py-3 mt-4 border-bottom border-secondary">
+        <h3 class="mb-0 pb-2">実績一覧</h3>
+    </div>
+
+    <div class="px-3">
+        <WorkList Works="works" />
+    </div>
+
+    <div class="text-center py-3 mt-4 border-bottom border-secondary">
+        <h3 class="mb-0 pb-2">ポイント割合</h3>
+    </div>
+
+    <div class="px-3">
+        <PointSummaryList PointSumList="pointSumList" />
+    </div>
 </div>
 
 @code {
