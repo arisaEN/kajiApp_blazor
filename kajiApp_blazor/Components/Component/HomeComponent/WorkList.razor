@@ -11,7 +11,7 @@
                 </div>
             </div>
         }
-        else if (Works == null || !Works.Any())
+        else if (worklist == null || !worklist.Any())
         {
             <p class="text-center">2日間の記録がありません</p>
         }
@@ -29,14 +29,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var work in Works)
+                        @foreach (var w in worklist)
                         {
                             <tr>
-                                <td>@work.Id</td>
-                                <td>@work.Day.ToShortDateString()</td>
-                                <td>@work.Name</td>
-                                <td>@work.WorkName</td>
-                                <td>@work.Percent %</td>
+                                <td>@w.Id</td>
+                                <td>@w.Day.ToShortDateString()</td>
+                                <td>@w.Name</td>
+                                <td>@w.WorkName</td>
+                                <td>@w.Percent %</td>
                             </tr>
                         }
                     </tbody>
@@ -48,7 +48,7 @@
 
 @code {
     //リストWorksに反応があるとUIに更新がかかる。
-    [Parameter] public List<Models.HomeModel.WorkList>? Works { get; set; }
+    [Parameter] public List<Models.HomeModel.WorkList>? worklist { get; set; }
 
     [Inject] private HttpClient Http { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;
@@ -69,7 +69,7 @@
             isLoading = true; // ローディング開始
             await InvokeAsync(StateHasChanged); // UI更新
             var workListShow = new WorkListShow();
-            Works = await workListShow.GetWorksAsync();
+            worklist = await workListShow.GetWorksAsync();
         }
         catch (Exception ex)
         {

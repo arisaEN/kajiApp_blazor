@@ -36,6 +36,9 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
             LoadDataFromDatabase();
         }
 
+        /// <summary>
+        /// 入力フォームを作る
+        /// </summary>
         private void LoadDataFromDatabase()
         {
             using (var connection = new SQLiteConnection(ConnectionString))
