@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ProtectedSessionStorage>();
-//builder.Services.AddScoped<WorkListShow>();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<AppState>();
 

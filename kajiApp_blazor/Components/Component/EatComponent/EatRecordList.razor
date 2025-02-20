@@ -1,0 +1,62 @@
+﻿@using kajiApp_blazor.Components.Models.EatModel
+
+<div class="card bg-dark text-white shadow-lg rounded">
+    <div class="card-body">
+        @if (isLoading)
+        {
+            <!-- ぐるぐるマークを表示 -->
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (eatrecord == null || !eatrecord.Any())
+        {
+            <p class="text-center text-white">記録がありません</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped w-100 eat-table text-white bg-dark">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th class="text-white">年</th>
+                            <th class="text-white">月</th>
+                            <th class="text-white">金額</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (eatrecord == null)
+                        {
+                            <tr><td colspan="3" class="text-center text-white">データを読み込み中...</td></tr>
+                        }
+                        else if (!eatrecord.Any())
+                        {
+                            <tr><td colspan="3" class="text-center text-muted">データがありません</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var e in eatrecord)
+                            {
+                                <tr class="text-center text-white">
+                                    <td>@e.year</td>
+                                    <td>@e.month</td>
+                                    <td>@e.amount</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<Models.EatModel.EatRecord>? eatrecord { get; set; }
+    [Inject] private HttpClient Http { get; set; } = default!;
+    [Inject] private AppState AppState { get; set; } = default!;
+
+    private bool isLoading = false;
+}
