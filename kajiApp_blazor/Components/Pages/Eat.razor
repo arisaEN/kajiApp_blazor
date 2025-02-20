@@ -1,1 +1,80 @@
 ﻿
+=======
+﻿@page "/eat"
+@using kajiApp_blazor.Components.Component.HomeComponent
+@using kajiApp_blazor.Components.Models.HomeModel
+@using kajiApp_blazor.Components.DatabaseContext.HomeDBC
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
+@using kajiApp_blazor.Components
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IConfiguration Configuration
+
+<PageTitle>食費</PageTitle>
+
+
+
+<h1 class="fas fa-utensils text-center mb-4 mt-4">食費記録一覧</h1>
+
+@if (records == null)
+{
+    <p>データを読み込み中...</p>
+}
+else if (!records.Any())
+{
+    <p class="text-center text-muted">データがありません</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped w-100 eat-table">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>年</th>
+                    <th>月</th>
+                    <th>金額</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var record in records)
+                {
+                    <tr class="text-center">
+                        <td>@record.Year</td>
+                        <td>@record.Month</td>
+                        <td>@record.Amount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="text-center mt-4">
+    <a href="/" class="btn btn-secondary">家事実績入力一覧へ戻る</a>
+</div>
+
+@code {
+    private List<EatRecord> records;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var dbContext = await DbFactory.CreateDbContextAsync();
+        records = await dbContext.EatDetails
+            .GroupBy(e => new { e.Year, e.Month })
+            .Select(g => new EatRecord
+                {
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    Amount = g.Count()
+                })
+            .ToListAsync();
+    }
+
+    private class EatRecord
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public int Amount { get; set; }
+    }
+}
+>>>>>>> 2daea7d22c133531e7387c0a66bc093b306c3b3e
