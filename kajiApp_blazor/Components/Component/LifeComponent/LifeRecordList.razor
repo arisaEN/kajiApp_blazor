@@ -1,0 +1,68 @@
+﻿@using kajiApp_blazor.Components.Models.LifeModel
+
+<div class="card bg-dark text-white shadow-lg rounded">
+    <div class="card-body">
+        @if (isLoading)
+        {
+            <!-- ぐるぐるマークを表示 -->
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (liferecord == null || !liferecord.Any())
+        {
+            <p class="text-center text-white">記録がありません</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped w-100 eat-table text-white bg-dark">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th class="text-white">年</th>
+                            <th class="text-white">月</th>
+                            <th class="text-white">家賃</th>
+                            <th class="text-white">水道代</th>
+                            <th class="text-white">電気代</th>
+                            <th class="text-white">ガス代</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (liferecord == null)
+                        {
+                            <tr><td colspan="3" class="text-center text-white">データを読み込み中...</td></tr>
+                        }
+                        else if (!liferecord.Any())
+                        {
+                            <tr><td colspan="3" class="text-center text-muted">データがありません</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var l in liferecord)
+                            {
+                                <tr class="text-center text-white">
+                                    <td>@l.year</td>
+                                    <td>@l.month</td>
+                                    <td>@l.rent</td>
+                                    <td>@l.water</td>
+                                    <td>@l.electricity</td>
+                                    <td>@l.gas</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<Models.LifeModel.LifeRecord>? liferecord { get; set; }
+    [Inject] private HttpClient Http { get; set; } = default!;
+    [Inject] private AppState AppState { get; set; } = default!;
+
+    private bool isLoading = false;
+}

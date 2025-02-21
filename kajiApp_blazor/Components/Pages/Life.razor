@@ -1,64 +1,38 @@
 ﻿@page "/life"
-@attribute [StreamRendering]
+@using kajiApp_blazor.Components.Component.LifeComponent
+@using kajiApp_blazor.Components.Models.LifeModel
+@using kajiApp_blazor.Components.DatabaseContext.LifeDBC
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
+@using kajiApp_blazor.Components
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IConfiguration Configuration
 
-<PageTitle>Weather</PageTitle>
-
-<h1>Weather</h1>
-
-<p>This component demonstrates showing data.</p>
-
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+    <div class="px-3">
+        <LifeRecordList LifeRecord="liferecord"  />
+    </div>
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private List<LifeRecord>? liferecord = null;
 
+    //非同期で実績リスト取得
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
+        //家事実績リストをDBから持ってくる。入力フォームさえできてればOKなので非同期で取得する
+        _ = LoadLifeAsync();
     }
-
-    private class WeatherForecast
+    /// <summary>
+    ///Eatリスト取得非同期
+    /// </summary>
+    /// <returns></returns>
+    private async Task LoadLifeAsync()
     {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        var lifeRecordShow = new DatabaseContext.LifeDBC.LifeRecordShow();
+        liferecord = await lifeRecordShow.GetLifeAsync();
+        if (liferecord != null)
+        {
+            //worklistに値が入ったらUI更新
+            await InvokeAsync(StateHasChanged);
+        }
     }
 }
