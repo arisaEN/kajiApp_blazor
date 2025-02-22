@@ -10,7 +10,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
         //非同期版
         public  async Task<List<WorkList>> GetWorksAsync() // ✅ 非同期メソッド
         {
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
             using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync(); // ✅ OpenAsync() を使う
 

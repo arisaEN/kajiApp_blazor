@@ -75,6 +75,7 @@ else
                     <th>ID</th>
                     <th>金額</th>
                     <th>操作</th>
+                    <th>登録日時</th>
                 </tr>
             </thead>
             <tbody>
@@ -84,6 +85,7 @@ else
                         <td>@record.id</td>
                         <td><input type="number" class="form-control" @bind="record.amount" /></td>
                         <td><button class="btn btn-primary" @onclick="() => UpdateRecord(record)">更新</button></td>
+                        <td>@record.yyyymm</td>
                     </tr>
                 }
             </tbody>
@@ -208,10 +210,22 @@ else
         }
     }
 
-   
+
 
     private async Task UpdateRecord(EatDetailRecord record)
     {
-        // await EatDB.UpdateEatDetailAsync(record.Id, record.Amount);
+        try
+        {
+            var eatDetailEdit = new EatDetailEdit();
+            await eatDetailEdit.UpdateEatDetailAsync(record.id, record.amount); // idを使用して更新
+            //更新後eatテーブル更新
+            await eatDetailEdit.EatDetailSumAsync();
+            // 更新後にリストを再取得
+            await ReloadData();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"データ更新中にエラーが発生しました: {ex.Message}");
+        }
     }
 }

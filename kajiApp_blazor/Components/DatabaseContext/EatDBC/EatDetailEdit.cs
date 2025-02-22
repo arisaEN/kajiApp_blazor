@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Diagnostics;
 using kajiApp_blazor.Components.Models.EatModel;
 using Microsoft.Data.Sqlite;
@@ -55,7 +56,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.EatDBC
         }
 
         /// <summary>
-        /// 明細取得
+        /// 明細一覧取得
         /// </summary>
         /// <returns></returns>
         public async Task<List<EatDetailRecord>> GetEatDetailAsync(int year, int month)
@@ -86,6 +87,25 @@ namespace kajiApp_blazor.Components.DatabaseContext.EatDBC
             }
 
             return eatDetailRecord;
+        }
+
+        /// <summary>
+        /// 明細アップデート
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        public async Task UpdateEatDetailAsync(int id, int amount)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText = "UPDATE eat_detail " +
+                                                    "SET amount = @amount " +
+                                                    "WHERE id = @id";
+            command.Parameters.AddWithValue("@amount", amount);
+            command.Parameters.AddWithValue("@id", id);
+            await command.ExecuteNonQueryAsync();
         }
     }
 }
