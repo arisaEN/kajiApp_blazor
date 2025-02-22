@@ -174,7 +174,7 @@ else
     }
 
     /// <summary>
-    /// 明細保存ボタンを押したときの処理
+    /// 明細保存ボタンを押したときの処理（新規登録）
     /// </summary>
     /// <returns></returns>
     private async Task SaveNewRecord()
@@ -211,7 +211,11 @@ else
     }
 
 
-
+    /// <summary>
+    /// eat明細更新
+    /// </summary>
+    /// <param name="record"></param>
+    /// <returns></returns>
     private async Task UpdateRecord(EatDetailRecord record)
     {
         try

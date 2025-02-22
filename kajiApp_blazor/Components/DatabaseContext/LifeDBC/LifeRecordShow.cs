@@ -39,5 +39,8 @@ namespace kajiApp_blazor.Components.DatabaseContext.LifeDBC
             }
             return eatrecord; // ✅ 戻り値を Task<List<Work>> にする
         }
+        
+        
+
     }
 }

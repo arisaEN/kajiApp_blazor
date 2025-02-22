@@ -1,10 +1,10 @@
 ﻿@using kajiApp_blazor.Components.Models.LifeModel
+@using kajiApp_blazor.Components.DatabaseContext.LifeDBC
 
 <div class="card bg-dark text-white shadow-lg rounded">
     <div class="card-body">
         @if (isLoading)
         {
-            <!-- ぐるぐるマークを表示 -->
             <div class="d-flex justify-content-center">
                 <div class="spinner-border text-light" role="status">
                     <span class="visually-hidden">Loading...</span>
@@ -27,30 +27,37 @@
                             <th class="text-white">水道代</th>
                             <th class="text-white">電気代</th>
                             <th class="text-white">ガス代</th>
+                            <th class="text-white">操作</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if (liferecord == null)
+                        @foreach (var l in liferecord)
                         {
-                            <tr><td colspan="3" class="text-center text-white">データを読み込み中...</td></tr>
-                        }
-                        else if (!liferecord.Any())
-                        {
-                            <tr><td colspan="3" class="text-center text-muted">データがありません</td></tr>
-                        }
-                        else
-                        {
-                            @foreach (var l in liferecord)
-                            {
-                                <tr class="text-center text-white">
-                                    <td>@l.year</td>
-                                    <td>@l.month</td>
+                            <tr class="text-center text-white">
+                                <td>@l.year</td>
+                                <td>@l.month</td>
+                                @if (editRecord == l)
+                                {
+                                    <td><input type="number" class="form-control" @bind="editRent" /></td>
+                                    <td><input type="number" class="form-control" @bind="editWater" /></td>
+                                    <td><input type="number" class="form-control" @bind="editElectricity" /></td>
+                                    <td><input type="number" class="form-control" @bind="editGas" /></td>
+                                    <td>
+                                        <button class="btn btn-success" @onclick="() => UpdateRecord(l)">更新</button>
+                                        <button class="btn btn-secondary" @onclick="CancelEdit">❌️</button>
+                                    </td>
+                                }
+                                else
+                                {
                                     <td>@l.rent</td>
                                     <td>@l.water</td>
                                     <td>@l.electricity</td>
                                     <td>@l.gas</td>
-                                </tr>
-                            }
+                                    <td>
+                                        <button class="btn btn-primary" @onclick="() => EditRecord(l)">編集</button>
+                                    </td>
+                                }
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -65,4 +72,36 @@
     [Inject] private AppState AppState { get; set; } = default!;
 
     private bool isLoading = false;
+    private Models.LifeModel.LifeRecord? editRecord;
+    private int editRent, editWater, editElectricity, editGas;
+
+    private void EditRecord(Models.LifeModel.LifeRecord record)
+    {
+        editRecord = record;
+        editRent = record.rent;
+        editWater = record.water;
+        editElectricity = record.electricity;
+        editGas = record.gas;
+    }
+
+    private void CancelEdit()
+    {
+        editRecord = null;
+    }
+
+    private async Task UpdateRecord(Models.LifeModel.LifeRecord record)
+    {
+        try
+        {
+            var lifeDataEdit = new LifeDataEdit();
+            await lifeDataEdit.UpdateEatDetailAsync(record); // idを使用して更新
+
+            // 更新後にリストを再取得
+            // await ReloadData();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"データ更新中にエラーが発生しました: {ex.Message}");
+        }
+    }
 }

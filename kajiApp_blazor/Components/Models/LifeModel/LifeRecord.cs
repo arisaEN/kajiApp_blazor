@@ -2,6 +2,7 @@
 {
     public class LifeRecord
     {
+        public int id { get; set; }
         public int year { get; set; }
         public int month { get; set; }
         //家賃
