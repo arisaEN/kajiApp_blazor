@@ -3,63 +3,67 @@
 
 
 
-<div class="card bg-dark text-white shadow-lg rounded">
-    <div class="card-body">
-        @if (isLoading)
-        {
-            <div class="d-flex justify-content-center">
-                <div class="spinner-border text-light" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        }
-        else if (eatrecord == null || !eatrecord.Any())
-        {
-            <p class="text-center text-white">記録がありません</p>
-        }
-        else
-        {
-            //明細入力画面
-            @if (isInputVisible)
-            {
-                <div class="input-group mt-3">
-                    <span class="input-group-text">@selectedYear / @selectedMonth</span>
-                    <input type="number" class="form-control" @bind="newAmount" placeholder="金額を入力" />
-                    <button class="btn btn-primary" @onclick="SaveNewRecord">保存</button>
-                </div>
-            }
-            //一覧
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped w-100 eat-table text-white bg-dark">
-                    <thead class="table-dark text-center">
-                        <tr>
-                            <th class="text-white">年</th>
-                            <th class="text-white">月</th>
-                            <th class="text-white">金額</th>
-                            <th class="text-white">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var e in eatrecord)
-                        {
-                            <tr class="text-center text-white">
-                                <td>@e.year</td>
-                                <td>@e.month</td>
-                                <td>@e.amount</td>
-                                <td>
-                                    <button class="btn btn-success" @onclick="() => ShowInputForm(e.year, e.month)">入力</button>
-                                    <button class="btn btn-warning" @onclick="() => ShowEditForm(e.year, e.month)">編集</button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
+@* //明細入力画面 *@
+@if (isInputVisible)
+{
+    <div class="input-group mt-3">
+        <span class="input-group-text">@selectedYear / @selectedMonth</span>
+        <input type="number" class="form-control" @bind="newAmount" placeholder="金額を入力" />
+        <button class="btn btn-primary" @onclick="SaveNewRecord">保存</button>
     </div>
-</div>
+}
+else
+{
+    <div class="input-placeholder text-center text-muted fade-in">
+        <p>「入力」ボタンを押してデータを追加してください</p>
+        <div class="placeholder-box"></div>
+    </div>
+}
 
+@* //一覧 *@
 
+@if (isLoading)
+{
+    <!-- ぐるぐるマークを表示 -->
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else if (eatrecord == null || !eatrecord.Any())
+{
+    <p class="text-center text-white">記録がありません</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped w-100 eat-table text-white bg-dark">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th class="text-white">年</th>
+                    <th class="text-white">月</th>
+                    <th class="text-white">金額</th>
+                    <th class="text-white">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in eatrecord)
+                {
+                    <tr class="text-center text-white">
+                        <td>@e.year</td>
+                        <td>@e.month</td>
+                        <td>@e.amount</td>
+                        <td>
+                            <button class="btn btn-success" @onclick="() => ShowInputForm(e.year, e.month)">入力</button>
+                            <button class="btn btn-warning" @onclick="() => ShowEditForm(e.year, e.month)">編集</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
 
 @if (isEditVisible && editRecords != null)
 {
