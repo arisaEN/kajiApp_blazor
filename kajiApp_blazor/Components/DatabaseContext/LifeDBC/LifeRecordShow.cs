@@ -17,7 +17,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.LifeDBC
             await connection.OpenAsync(); // ✅ OpenAsync() を使う
 
             var command = connection.CreateCommand();
-            command.CommandText = "SELECT year, month, rent, water, electricity, gas " +
+            command.CommandText = "SELECT id , year, month, rent, water, electricity, gas " +
                                                     "FROM life_detail " +
                                                     "ORDER BY yyyymm desc ";
 
@@ -29,15 +29,19 @@ namespace kajiApp_blazor.Components.DatabaseContext.LifeDBC
             {
                 eatrecord.Add(new LifeRecord
                 {
-                    year = reader.GetInt32(0),
-                    month = reader.GetInt32(1),
-                    rent = reader.GetInt32(2),
-                    water = reader.GetInt32(3),
-                    electricity = reader.GetInt32(4),
-                    gas = reader.GetInt32(5)
+                    id = reader.GetInt32(0),
+                    year = reader.GetInt32(1),
+                    month = reader.GetInt32(2),
+                    rent = reader.GetInt32(3),
+                    water = reader.GetInt32(4),
+                    electricity = reader.GetInt32(5),
+                    gas = reader.GetInt32(6)
                 });
             }
             return eatrecord; // ✅ 戻り値を Task<List<Work>> にする
         }
+        
+        
+
     }
 }
