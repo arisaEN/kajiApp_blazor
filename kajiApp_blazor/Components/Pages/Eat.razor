@@ -38,7 +38,7 @@
         eatrecord = await eatRecordShow.GetEatAsync();
         if (eatrecord != null)
         {
-            //worklistに値が入ったらUI更新
+            //eatに値が入ったらUI更新
             await InvokeAsync(StateHasChanged);
         }
     }

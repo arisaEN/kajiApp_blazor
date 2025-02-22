@@ -1,6 +1,6 @@
 ﻿@using kajiApp_blazor.Components.Models.EatModel
 @using kajiApp_blazor.Components.DatabaseContext.EatDBC
-
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
 
 
 @* //明細入力画面 *@
@@ -98,9 +98,6 @@ else
     [Inject] private AppState AppState { get; set; } = default!;
 
     private bool isLoading = false;
-
-
-
     private bool isInputVisible = false;
     private bool isEditVisible = false;
     private int selectedYear;
@@ -108,6 +105,49 @@ else
     private int newAmount;
     private List<EatDetailRecord>? editRecords;
 
+    /// <summary>
+    /// 初期化でリストデータ呼び出し
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        // 非同期バックグラウンドでリスト取得を実行　
+        AppState.OnChange += async () => await ReloadData();
+        _ = ReloadData(); // 初回データ読み込み
+    }
+
+    private async Task ReloadData()
+    {
+        try
+        {
+            isLoading = true; // ローディング開始
+            await InvokeAsync(StateHasChanged); // UI更新
+            var eatRecordShow = new EatRecordShow();
+            eatrecord  = await eatRecordShow.GetEatAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"データ取得エラー: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false; // ローディング終了
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    public void Dispose()
+    {
+        // イベント解除
+        AppState.OnChange -= async () => await ReloadData();
+    }
+
+
+
+    /// <summary>
+    /// 明細を入力するとき、その明細のキーを取得する
+    /// </summary>
+    /// <param name="year"></param>
+    /// <param name="month"></param>
+    /// <returns></returns>
     private async Task ShowInputForm(int year, int month)
     {
         selectedYear = year;
@@ -115,29 +155,60 @@ else
         isInputVisible = true;
         isEditVisible = false;
     }
-
-    ///明細保存ボタンを押したときの処理
-    private async Task SaveNewRecord()
-    {
-        var eatDetailEdit = new EatDetailEdit();
-        await eatDetailEdit.InsertEatDetailAsync(selectedYear, selectedMonth, newAmount);
-        await eatDetailEdit.EatDetailSumAsync();
-
-        // 最新の食費記録を取得
-        var eatRecordShow = new EatRecordShow();
-        await eatRecordShow.GetEatAsync();
-
-        isInputVisible = false;
-    }
-
+    /// <summary>
+    /// 明細を編集するとき、その明細のキーを取得する
+    /// </summary>
+    /// <param name="year"></param>
+    /// <param name="month"></param>
+    /// <returns></returns>
     private async Task ShowEditForm(int year, int month)
     {
         selectedYear = year;
         selectedMonth = month;
         isEditVisible = true;
         isInputVisible = false;
-        // editRecords = await EatDB.GetEatDetailAsync(year, month);
+        var eatDetailEdit = new EatDetailEdit();
+        editRecords = await eatDetailEdit.GetEatDetailAsync(selectedYear, selectedMonth);
     }
+
+    /// <summary>
+    /// 明細保存ボタンを押したときの処理
+    /// </summary>
+    /// <returns></returns>
+    private async Task SaveNewRecord()
+    {
+        try
+        {
+            isLoading = true; // ローディング開始
+            await InvokeAsync(StateHasChanged); // UI更新
+
+            var eatDetailEdit = new EatDetailEdit();
+            // 登録
+            await eatDetailEdit.InsertEatDetailAsync(selectedYear, selectedMonth, newAmount);
+
+            // 明細を eat テーブルに反映更新
+            await eatDetailEdit.EatDetailSumAsync();
+
+            // 最新の食費記録を取得
+            await ReloadData(); // ここでリストを更新
+
+            // 状態変更を通知
+            AppState.NotifyStateChanged();
+
+            isInputVisible = false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"データ登録中にエラーが発生しました: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false; // ローディング終了
+            await InvokeAsync(StateHasChanged); // UI更新
+        }
+    }
+
+   
 
     private async Task UpdateRecord(EatDetailRecord record)
     {
