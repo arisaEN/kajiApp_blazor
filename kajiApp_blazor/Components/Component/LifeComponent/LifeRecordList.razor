@@ -43,7 +43,7 @@
                                     <td><input type="number" class="form-control" @bind="editElectricity" /></td>
                                     <td><input type="number" class="form-control" @bind="editGas" /></td>
                                     <td>
-                                        <button class="btn btn-success" @onclick="() => UpdateRecord(l)">更新</button>
+                                        <button class="btn btn-success" @onclick="UpdateRecord">更新</button>
                                         <button class="btn btn-secondary" @onclick="CancelEdit">❌️</button>
                                     </td>
                                 }
@@ -73,11 +73,12 @@
 
     private bool isLoading = false;
     private Models.LifeModel.LifeRecord? editRecord;
-    private int editRent, editWater, editElectricity, editGas;
+    private int editId , editRent, editWater, editElectricity, editGas;
 
     private void EditRecord(Models.LifeModel.LifeRecord record)
     {
         editRecord = record;
+        editId = record.id;
         editRent = record.rent;
         editWater = record.water;
         editElectricity = record.electricity;
@@ -89,15 +90,28 @@
         editRecord = null;
     }
 
-    private async Task UpdateRecord(Models.LifeModel.LifeRecord record)
+    private async Task UpdateRecord()
     {
         try
         {
-            var lifeDataEdit = new LifeDataEdit();
-            await lifeDataEdit.UpdateEatDetailAsync(record); // idを使用して更新
+            if (editRecord != null)
+            {
+                // ユーザーが入力した値を editRecord に反映
+                editRecord.id = editId;
+                editRecord.rent = editRent;
+                editRecord.water = editWater;
+                editRecord.electricity = editElectricity;
+                editRecord.gas = editGas;
 
-            // 更新後にリストを再取得
-            // await ReloadData();
+                var lifeDataEdit = new LifeDataEdit();
+                await lifeDataEdit.UpdateEatDetailAsync(editRecord); // 更新処理
+
+                // 編集モードを終了
+                editRecord = null;
+
+                // データの再取得（必要なら）
+                // await ReloadData();
+            }
         }
         catch (Exception ex)
         {
