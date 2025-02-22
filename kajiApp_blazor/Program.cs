@@ -1,3 +1,4 @@
+using Blazored.Toast;
 using kajiApp_blazor.Components;
 using kajiApp_blazor.Components.DatabaseContext.HomeDBC;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<AppState>();
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
