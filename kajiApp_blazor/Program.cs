@@ -1,5 +1,6 @@
 using Blazored.Toast;
 using kajiApp_blazor.Components;
+using kajiApp_blazor.Components.DatabaseContext;
 using kajiApp_blazor.Components.DatabaseContext.HomeDBC;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
@@ -14,6 +15,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 var app = builder.Build();
+// データベースの初期化(今月分の明細追加)
+InitDBC.InitializeDatabase();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

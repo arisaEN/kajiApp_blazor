@@ -1,14 +1,29 @@
 ﻿@page "/admin"
+@using Microsoft.JSInterop
 @using kajiApp_blazor.Components
 @using kajiApp_blazor.Components.Models.AdminModel
 @using kajiApp_blazor.Components.DatabaseContext.AdminDBC
 @using kajiApp_blazor.Components.Component.AdminComponent
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
+@inject IJSRuntime JS
 @inject NavigationManager Navigation
 
 <h3 class="fas fa-user-shield text-center mb-4 mt-4">管理者画面</h3>
 
-@if (paymentDetail is null || paymentApprovalRecord is null)
+@if (!isAuthenticated)
+{
+    <div class="container mt-4 text-center">
+        <p>パスワードを入力してください。</p>
+        <input type="password" @bind="inputPassword" class="form-control w-25 mx-auto" placeholder="パスワード">
+        <button class="btn btn-primary mt-2" @onclick="Authenticate">ログイン</button>
+
+        @if (isWrongPassword)
+        {
+            <p class="text-danger mt-2">パスワードが違います</p>
+        }
+    </div>
+}
+else if (paymentDetail is null || paymentApprovalRecord is null)
 {
     <p>データを取得中...</p>
 }
@@ -25,13 +40,39 @@ else
 }
 
 @code {
+    private string inputPassword = string.Empty;
+    private bool isAuthenticated = false;
+    private bool isWrongPassword = false;
     private List<PaymentApprovalRecord> paymentApprovalRecord = new();
     private List<PaymentDetail> paymentDetail = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _ = LoadPaymentApprovalRecordAsync();
-        _ = LoadPaymentDetailAsync();
+        var authState = await JS.InvokeAsync<string>("localStorage.getItem", "isAuthenticated");
+        isAuthenticated = authState == "true";
+
+        if (isAuthenticated)
+        {
+            _ = LoadPaymentApprovalRecordAsync();
+            _ = LoadPaymentDetailAsync();
+        }
+    }
+
+    private async Task Authenticate()
+    {
+        if (inputPassword == "admin")
+        {
+            isAuthenticated = true;
+            isWrongPassword = false;
+            await JS.InvokeVoidAsync("localStorage.setItem", "isAuthenticated", "true");
+
+            _ = LoadPaymentApprovalRecordAsync();
+            _ = LoadPaymentDetailAsync();
+        }
+        else
+        {
+            isWrongPassword = true;
+        }
     }
 
     private async Task LoadPaymentApprovalRecordAsync()
