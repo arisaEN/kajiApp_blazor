@@ -1,0 +1,72 @@
+﻿@using kajiApp_blazor.Components.Models.OptionModel
+@using kajiApp_blazor.Components.DatabaseContext.OptionDBC
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>家事名</th>
+            <th>ポイント</th>
+            <th>区分番号</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var w in WorkMaster)
+        {
+            <tr>
+                <td>@w.Id</td>
+                <td>@w.WorkName</td>
+                <td>@w.WorkNamePoint</td>
+                <td>@w.CategoryNumber</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>家事リスト挿入</h3>
+<form @onsubmit="RegisterWork">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>家事名</th>
+                <th>ポイント</th>
+                <th>家事分類区分番号</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><InputText @bind-Value="newWork.WorkName" class="form-control" /></td>
+                <td><InputNumber @bind-Value="newWork.WorkNamePoint" class="form-control" /></td>
+                <td><InputNumber @bind-Value="newWork.CategoryNumber" class="form-control" /></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">家事名登録</button>
+</form>
+
+@code {
+    [Parameter] public List<WorkMasterList> WorkMaster { get; set; } = new();
+    private WorkMasterList newWork = new();
+    [Inject] private AppState AppState { get; set; } = default!;
+    private bool isLoading = false;
+
+    private async Task RegisterWork()
+    {
+        try
+        {
+            isLoading = true;
+            await new WorkMaster().InsertWorkMasterAsync(newWork);
+            Console.WriteLine("データを登録しました");
+            AppState.NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"データ登録中にエラーが発生しました: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}
