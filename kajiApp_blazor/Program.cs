@@ -3,12 +3,14 @@ using kajiApp_blazor.Components;
 using kajiApp_blazor.Components.DatabaseContext;
 using kajiApp_blazor.Components.DatabaseContext.HomeDBC;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddBlazoredToast();
+builder.Services.AddMudServices();
 
 
 // Add services to the container.

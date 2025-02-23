@@ -8,12 +8,13 @@
 @inject HttpClient Http
 @inject IConfiguration Configuration
 
-    <div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
-    <h1 class="text-center mt-3">
-        <i class="fas fa-wallet"></i> 生活費記録一覧
-    </h1>
-        <LifeRecordList LifeRecord="liferecord"  />
-    </div>
+<BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
+<div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
+<h1 class="text-center mt-3">
+    <i class="fas fa-wallet"></i> 生活費記録一覧
+</h1>
+    <LifeRecordList LifeRecord="liferecord"  />
+</div>
 
 @code {
     private List<LifeRecord>? liferecord = null;

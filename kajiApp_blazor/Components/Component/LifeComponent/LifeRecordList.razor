@@ -1,5 +1,6 @@
 ﻿@using kajiApp_blazor.Components.Models.LifeModel
 @using kajiApp_blazor.Components.DatabaseContext.LifeDBC
+@inject Blazored.Toast.Services.IToastService ToastService
 
 <div class="card bg-dark text-white shadow-lg rounded">
     <div class="card-body">
@@ -87,6 +88,7 @@
 
     private void CancelEdit()
     {
+        ToastService.ShowInfo("更新がキャンセルされました。");
         editRecord = null;
     }
 
@@ -109,6 +111,9 @@
                 // 編集モードを終了
                 editRecord = null;
 
+                // 成功時のトースト通知
+                ToastService.ShowSuccess("更新が完了しました");
+
                 // データの再取得（必要なら）
                 // await ReloadData();
             }
@@ -116,6 +121,8 @@
         catch (Exception ex)
         {
             Console.WriteLine($"データ更新中にエラーが発生しました: {ex.Message}");
+            // エラー時のトースト通知
+            ToastService.ShowError($"データ更新に失敗しました: {ex.Message}");
         }
     }
 }

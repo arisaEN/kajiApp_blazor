@@ -8,8 +8,9 @@
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 
-<h3 class="fas fa-user-shield text-center mb-4 mt-4">管理者画面</h3>
 
+<BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
+<h3 class="fas fa-user-shield text-center mb-4 mt-4">管理者画面</h3>
 @if (!isAuthenticated)
 {
     <div class="container mt-4 text-center">

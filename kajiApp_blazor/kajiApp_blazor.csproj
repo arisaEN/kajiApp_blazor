@@ -15,6 +15,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
+    <PackageReference Include="MudBlazor" Version="8.2.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     <Content Include="database.db">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

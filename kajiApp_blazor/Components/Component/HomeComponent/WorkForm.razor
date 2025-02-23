@@ -82,9 +82,17 @@
     //登録ボタン
     private async Task HandleSubmit()
     {
+        if (string.IsNullOrWhiteSpace(FormModel.Name) ||
+            FormModel.Day == default ||
+            FormModel.WorkId == default ||
+            FormModel.Percent == default)
+        {
+            ToastService.ShowWarning("すべての項目を入力してください。");
+            return;
+        }
+
         try
         {
-            ToastService.ShowSuccess("操作が成功しました！");
             isLoading = true; // ローディング開始
 
             // WorkIdからWorkNameを取得
@@ -96,12 +104,14 @@
             }
             else
             {
+                ToastService.ShowWarning("家事名が未選択です。");
                 Console.WriteLine($"WorkId {FormModel.WorkId} に対応する WorkName が見つかりません");
                 return;
             }
 
             // データベースに登録
             await TodayWorkRegistration.SaveToDatabaseAsync();
+            ToastService.ShowSuccess("家事記録成功しました！");
             Console.WriteLine("データを登録しました");
 
             // 状態変更を通知
@@ -109,6 +119,7 @@
         }
         catch (Exception ex)
         {
+            ToastService.ShowError("家事記録失敗しました。");
             Console.WriteLine($"データ登録中にエラーが発生しました: {ex.Message}");
         }
         finally

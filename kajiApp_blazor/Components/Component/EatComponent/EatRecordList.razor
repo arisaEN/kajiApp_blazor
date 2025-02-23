@@ -2,6 +2,8 @@
 @using kajiApp_blazor.Components.DatabaseContext.EatDBC
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @implements IDisposable
+@inject Blazored.Toast.Services.IToastService ToastService
+@inject IJSRuntime JS
 
 @* //明細入力画面 *@
 @if (isInputVisible)
@@ -181,6 +183,13 @@ else
     {
         try
         {
+            // 入力値のバリデーション
+            if (selectedYear == 0 || selectedMonth == 0 || newAmount <= 0)
+            {
+                ToastService.ShowWarning("すべての項目を正しく入力してください");
+                return;
+            }
+
             isLoading = true; // ローディング開始
             await InvokeAsync(StateHasChanged); // UI更新
 
@@ -192,21 +201,24 @@ else
             await eatDetailEdit.EatDetailSumAsync();
 
             // 最新の食費記録を取得
-            await ReloadData(); // ここでリストを更新
+            await ReloadData();
 
             // 状態変更を通知
             AppState.NotifyStateChanged();
 
             isInputVisible = false;
+
+            // 成功メッセージ
+            ToastService.ShowSuccess("データが正常に登録されました");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"データ登録中にエラーが発生しました: {ex.Message}");
+            ToastService.ShowError($"データ登録中にエラーが発生しました: {ex.Message}");
         }
         finally
         {
             isLoading = false; // ローディング終了
-            await InvokeAsync(StateHasChanged); // UI更新
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -220,16 +232,24 @@ else
     {
         try
         {
+            // ユーザーに確認ダイアログを表示
+            bool isConfirmed = await JS.InvokeAsync<bool>("confirm", "本当に更新してもよろしいですか？");
+            if (!isConfirmed)
+            {
+                ToastService.ShowInfo("更新がキャンセルされました");
+                return;
+            }
+
             var eatDetailEdit = new EatDetailEdit();
             await eatDetailEdit.UpdateEatDetailAsync(record.id, record.amount); // idを使用して更新
-            //更新後eatテーブル更新
             await eatDetailEdit.EatDetailSumAsync();
-            // 更新後にリストを再取得
             await ReloadData();
+            ToastService.ShowSuccess("データが正常に更新されました");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"データ更新中にエラーが発生しました: {ex.Message}");
+            ToastService.ShowError($"データ更新中にエラーが発生しました: {ex.Message}");
         }
     }
 }
