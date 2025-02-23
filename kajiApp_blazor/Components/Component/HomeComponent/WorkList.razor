@@ -1,4 +1,5 @@
 ﻿@using kajiApp_blazor.Components.Models.HomeModel
+@implements IDisposable
 
 <div class="card bg-dark text-white shadow-lg rounded">
     <div class="card-body">
@@ -54,11 +55,10 @@
     [Inject] private AppState AppState { get; set; } = default!;
 
     private bool isLoading = false;
-
+    private void OnChangeHandler() => _ = ReloadData();
     protected override void OnInitialized()
     {
-        // 非同期バックグラウンドでリスト取得を実行　
-        AppState.OnChange += async () => await ReloadData();
+        AppState.OnChange += OnChangeHandler;
         _ = ReloadData(); // 初回データ読み込み
     }
 
@@ -84,8 +84,7 @@
 
     public void Dispose()
     {
-        // イベント解除
-        AppState.OnChange -= async () => await ReloadData();
+        AppState.OnChange -= OnChangeHandler;
     }
 
 }

@@ -1,7 +1,7 @@
 ﻿@using kajiApp_blazor.Components.Models.EatModel
 @using kajiApp_blazor.Components.DatabaseContext.EatDBC
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
-
+@implements IDisposable
 
 @* //明細入力画面 *@
 @if (isInputVisible)
@@ -110,10 +110,11 @@ else
     /// <summary>
     /// 初期化でリストデータ呼び出し
     /// </summary>
+    private void OnChangeHandler() => _ = ReloadData();
+
     protected override void OnInitialized()
     {
-        // 非同期バックグラウンドでリスト取得を実行　
-        AppState.OnChange += async () => await ReloadData();
+        AppState.OnChange += OnChangeHandler;
         _ = ReloadData(); // 初回データ読み込み
     }
 
@@ -138,8 +139,7 @@ else
     }
     public void Dispose()
     {
-        // イベント解除
-        AppState.OnChange -= async () => await ReloadData();
+        AppState.OnChange -= OnChangeHandler;
     }
 
 
