@@ -17,8 +17,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
     /// </summary>
     public class TodayWorkRegistration
     {
-        private const string DatabaseFile = "database.db";
-        private static readonly string ConnectionString = "Data Source=" + DatabaseFile + ";";
+        private readonly string _connectionString = "Data Source=database.db";
 
         public TodayWork FormModel { get; private set; } = new TodayWork();
 
@@ -41,7 +40,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
         /// </summary>
         private void LoadDataFromDatabase()
         {
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
 
@@ -90,7 +89,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
         {
             try
             {
-                using var connection = new SQLiteConnection(ConnectionString);
+                using var connection = new SQLiteConnection(_connectionString);
                 await connection.OpenAsync();
 
                 using var command = new SQLiteCommand(
