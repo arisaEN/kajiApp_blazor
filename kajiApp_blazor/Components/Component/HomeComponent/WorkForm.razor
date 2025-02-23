@@ -1,12 +1,18 @@
 ﻿
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
 @using kajiApp_blazor.Components.Models.HomeModel
 @using kajiApp_blazor.Components.DatabaseContext.HomeDBC
 @using Microsoft.AspNetCore.Components.Forms
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
+@inject IToastService ToastService
+
 
 
 <div class="card bg-dark text-white shadow-lg rounded">
     <div class="card-body">
+        
         <EditForm Model="FormModel" OnValidSubmit="HandleSubmit">
             <DataAnnotationsValidator />
             <input type="hidden" @bind="FormModel.WorkId" />
@@ -78,6 +84,7 @@
     {
         try
         {
+            ToastService.ShowSuccess("操作が成功しました！");
             isLoading = true; // ローディング開始
 
             // WorkIdからWorkNameを取得

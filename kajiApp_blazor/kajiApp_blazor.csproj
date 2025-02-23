@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.Toast" Version="4.2.1" />
+    <PackageReference Include="Blazored.Toast.TestExtensions" Version="4.2.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -15,6 +16,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+    <Content Include="database.db">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

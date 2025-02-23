@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<AppState>();
+builder.Services.AddBlazoredToast();
 
 
 // Add services to the container.
