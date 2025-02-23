@@ -1,6 +1,7 @@
 ﻿@inject IJSRuntime JS
 @using kajiApp_blazor.Components.Models.HomeModel
 @using kajiApp_blazor.Components.DatabaseContext.HomeDBC
+@implements IDisposable
 
 <div class="card bg-dark text-white shadow-lg rounded-3 m-0">
     <div class="card-body p-4">
@@ -65,14 +66,15 @@
 
     private bool isLoading = false;
 
+    private void OnChangeHandler() => _ = ReloadData();
+
     protected override void OnInitialized()
     {
-        // 非同期バックグラウンドでリスト取得を実行　
-        AppState.OnChange += async () => await ReloadPointSumData();
-        _ = ReloadPointSumData(); // 初回データ読み込み
+        AppState.OnChange += OnChangeHandler;
+        _ = ReloadData(); // 初回データ読み込み
     }
 
-    private async Task ReloadPointSumData()
+    private async Task ReloadData()
     {
         try
         {
@@ -95,8 +97,7 @@
 
     public void Dispose()
     {
-        // イベント解除
-        AppState.OnChange -= async () => await ReloadPointSumData();
+        AppState.OnChange -= OnChangeHandler;
     }
 
 }

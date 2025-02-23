@@ -1,64 +1,57 @@
 ﻿@page "/option"
-@attribute [StreamRendering]
+@using kajiApp_blazor.Components.Models.OptionModel
+@using kajiApp_blazor.Components.DatabaseContext.OptionDBC
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IConfiguration Configuration
+@implements IDisposable
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
+@inject AppState AppState
+@using kajiApp_blazor.Components.Component.OptionComponent
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>設定</PageTitle>
 
-<h1>Weather</h1>
+<h1 class="fas fa-cog text-center mt-4 mb-4">設定</h1>
 
-<p>This component demonstrates showing data.</p>
+<h2 class="mt-2">家事名リスト管理</h2>
+<WorkMasterComponent WorkMaster="workmaster" />
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<h2 class="mt-2">名前リスト管理</h2>
+<NameMasterComponent NameMaster="namemaster" />
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private List<WorkMasterList> workmaster = new();
+    private List<NameMasterList> namemaster = new();
 
-    protected override async Task OnInitializedAsync()
+    private void OnChangeHandler() => _ = ReloadData();
+
+    protected override void OnInitialized()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        // await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
+        AppState.OnChange += OnChangeHandler;
+        _ = ReloadData();
     }
 
-    private class WeatherForecast
+
+    /// <summary>
+    /// データを呼び出して、子コンポーネントに渡す
+    /// </summary>
+    /// <returns></returns>
+    private async Task ReloadData()
     {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        try
+        {
+            workmaster = await new WorkMaster().GetWorkMasterAsync();
+            namemaster = await new NameMaster().GetNameMasterAsync();
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"データ取得エラー: {ex.Message}");
+        }
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= OnChangeHandler;
     }
 }
