@@ -1,0 +1,30 @@
+SVG変換
+https://yoksel.github.io/url-encoder/
+
+
+◎Homeはフォームから保存された情報を、リストとサマリーに反映させるために、コンポーネントの状態を監視している。
+参考
+@implements IDisposable
+
+ private void OnChangeHandler() => _ = ReloadData();
+
+ protected override void OnInitialized()
+ {
+     AppState.OnChange += OnChangeHandler;
+     _ = ReloadData(); // 初回データ読み込み
+ }
+
+
+public void Dispose()
+{
+    AppState.OnChange -= OnChangeHandler;
+}
+
+ページに訪れると OnInitializedで監視開始
+ Disposeで、そのページ内から別のページに遷移すると監視が解かれる。
+
+
+ ◎Lifeはこの設定をしていない。
+ 入力した情報は、一つのコンポーネントにしか影響しないため。
+
+

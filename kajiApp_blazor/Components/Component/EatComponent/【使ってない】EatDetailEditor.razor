@@ -1,0 +1,17 @@
+﻿<div class="input-group mt-3">
+    <span class="input-group-text">@SelectedYear / @SelectedMonth</span>
+    <input type="number" class="form-control" @bind="newAmount" placeholder="金額を入力" />
+    <button class="btn btn-primary" @onclick="SaveNewRecord">保存</button>
+</div>
+
+@code {
+    [Parameter] public int SelectedYear { get; set; }
+    [Parameter] public int SelectedMonth { get; set; }
+    [Parameter] public EventCallback<int> OnSave { get; set; }
+    private int newAmount;
+
+    private async Task SaveNewRecord()
+    {
+        await OnSave.InvokeAsync(newAmount);
+    }
+}
