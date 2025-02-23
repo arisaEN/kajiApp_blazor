@@ -10,15 +10,15 @@
 @using kajiApp_blazor.Components.Component.OptionComponent
 
 <PageTitle>設定</PageTitle>
+<div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
+    <h1 class="fas fa-cog text-center mt-4 mb-4">設定</h1>
 
-<h1 class="fas fa-cog text-center mt-4 mb-4">設定</h1>
+    <h2 class="mt-2">家事名リスト管理</h2>
+    <WorkMasterComponent WorkMaster="workmaster" />
 
-<h2 class="mt-2">家事名リスト管理</h2>
-<WorkMasterComponent WorkMaster="workmaster" />
-
-<h2 class="mt-2">名前リスト管理</h2>
-<NameMasterComponent NameMaster="namemaster" />
-
+    <h2 class="mt-2">名前リスト管理</h2>
+    <NameMasterComponent NameMaster="namemaster" />
+</div>
 @code {
     private List<WorkMasterList> workmaster = new();
     private List<NameMasterList> namemaster = new();

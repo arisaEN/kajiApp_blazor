@@ -1,0 +1,48 @@
+﻿@using kajiApp_blazor.Components.Models.AdminModel
+@code {
+    [Parameter] public List<PaymentDetail> PaymentDetails { get; set; } = new();
+}
+
+<div class="table-responsive">
+    <table class="table table-hover table-bordered">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>年月</th>
+                <th>食費</th>
+                <th>家賃</th>
+                <th>水道代</th>
+                <th>電気代</th>
+                <th>ガス代</th>
+                <th>生活費合計</th>
+                <th>生活費_食費</th>
+                <th>折半計算</th>
+                <th>家事割合適用後折半代金</th>
+                <th>割合</th>
+                <th>支払金額</th>
+                <th>支払人</th>
+                <th>完了判定</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pD in PaymentDetails)
+            {
+                <tr class="text-center">
+                    <td>@pD.YearMonth</td>
+                    <td>@pD.Food</td>
+                    <td>@pD.Rent</td>
+                    <td>@pD.Water</td>
+                    <td>@pD.Electricity</td>
+                    <td>@pD.Gas</td>
+                    <td>@pD.LifeTotal</td>
+                    <td>@pD.FullTotal</td>
+                    <td>@pD.SharedCost</td>
+                    <td>@pD.AdjustedSharedCost</td>
+                    <td>@pD.Percentage</td>
+                    <td>@pD.Payment</td>
+                    <td>@pD.Payer</td>
+                    <td>@pD.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

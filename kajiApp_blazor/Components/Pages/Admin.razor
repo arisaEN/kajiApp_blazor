@@ -1,64 +1,57 @@
 ﻿@page "/admin"
-@attribute [StreamRendering]
+@using kajiApp_blazor.Components
+@using kajiApp_blazor.Components.Models.AdminModel
+@using kajiApp_blazor.Components.DatabaseContext.AdminDBC
+@using kajiApp_blazor.Components.Component.AdminComponent
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
+@inject NavigationManager Navigation
 
-<PageTitle>Weather</PageTitle>
+<h3 class="fas fa-user-shield text-center mb-4 mt-4">管理者画面</h3>
 
-<h1>Weather</h1>
-
-<p>This component demonstrates showing data.</p>
-
-@if (forecasts == null)
+@if (paymentDetail is null || paymentApprovalRecord is null)
 {
-    <p><em>Loading...</em></p>
+    <p>データを取得中...</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="container mt-4">
+        <PaymentApprovalRecordComponent PaymentApprovalRecords="paymentApprovalRecord" OnUpdate="UpdateRecord" />
+        <PaymentDetailComponent PaymentDetails="paymentDetail" />
+
+        <div class="text-center my-4">
+            <a class="btn btn-secondary" href="/">家事実績入力一覧へ戻る</a>
+        </div>
+    </div>
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private List<PaymentApprovalRecord> paymentApprovalRecord = new();
+    private List<PaymentDetail> paymentDetail = new();
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        // await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
+        _ = LoadPaymentApprovalRecordAsync();
+        _ = LoadPaymentDetailAsync();
     }
 
-    private class WeatherForecast
+    private async Task LoadPaymentApprovalRecordAsync()
     {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        var paymentApprovalRecordOperation = new PaymentApprovalRecordOperation();
+        paymentApprovalRecord = await paymentApprovalRecordOperation.GetPaymentApprovalRecordAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadPaymentDetailAsync()
+    {
+        var paymentDetailOperation = new PaymentDetailOperation();
+        paymentDetail = await paymentDetailOperation.GetPaymentDetailAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task UpdateRecord(PaymentApprovalRecord updatedRecord)
+    {
+        var operation = new PaymentApprovalRecordOperation();
+        await operation.EditPaymentAsync(updatedRecord.YearMonth, updatedRecord.Payment, updatedRecord.Status);
+        await LoadPaymentApprovalRecordAsync(); // 更新後リストを再取得
     }
 }

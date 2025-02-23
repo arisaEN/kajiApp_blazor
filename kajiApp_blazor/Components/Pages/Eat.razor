@@ -9,15 +9,11 @@
 @inject IConfiguration Configuration
 
 
-<div class="card bg-dark text-white shadow-lg rounded">
-    <div class="card-body">
-        <div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
-                <h1 class="text-center mt-3">
-                    <i class="fas fa-utensils"></i> 食費記録一覧
-                </h1>
-                <EatRecordList EatRecord="eatrecord"  />
-        </div>
-    </div>
+<div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
+    <h1 class="text-center mt-3">
+        <i class="fas fa-utensils"></i> 食費記録一覧
+    </h1>
+    <EatRecordList EatRecord="eatrecord"  />
 </div>
 @code {
     private List<Models.EatModel.EatRecord>? eatrecord = null;

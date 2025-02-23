@@ -1,7 +1,7 @@
 ﻿@using kajiApp_blazor.Components.Models.OptionModel
 @using kajiApp_blazor.Components.DatabaseContext.OptionDBC
 
-<table class="table table-bordered table-striped">
+<table class="table table-bordered table-dark">
     <thead class="table-dark">
         <tr>
             <th>ID</th>
@@ -25,7 +25,7 @@
 
 <h3>家事リスト挿入</h3>
 <form @onsubmit="RegisterWork">
-    <table class="table table-bordered">
+    <table class="table table-bordered table-dark">
         <thead>
             <tr>
                 <th>家事名</th>
@@ -33,13 +33,13 @@
                 <th>家事分類区分番号</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td><InputText @bind-Value="newWork.WorkName" class="form-control" /></td>
-                <td><InputNumber @bind-Value="newWork.WorkNamePoint" class="form-control" /></td>
-                <td><InputNumber @bind-Value="newWork.CategoryNumber" class="form-control" /></td>
-            </tr>
-        </tbody>
+         <tbody> 
+             <tr> 
+                 <td><InputText @bind-Value="newWork.WorkName" class="form-control" /></td> 
+                 <td><InputNumber @bind-Value="newWork.WorkNamePoint" class="form-control" /></td> 
+                 <td><InputNumber @bind-Value="newWork.CategoryNumber" class="form-control" /></td> 
+             </tr> 
+         </tbody> 
     </table>
     <button type="submit" class="btn btn-primary">家事名登録</button>
 </form>
