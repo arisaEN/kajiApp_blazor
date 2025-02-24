@@ -6,7 +6,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
 {
     public  class WorkListShow
     {
-        private  readonly string _connectionString = "Data Source=database.db";
+        private readonly string _connectionString = "Data Source=/app/database.db";
         //非同期版
         public  async Task<List<WorkList>> GetWorksAsync() // ✅ 非同期メソッド
         {
@@ -28,10 +28,10 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
                 worklist.Add(new WorkList
                 {
                     Id = reader.GetInt32(0),
-                    Day = reader.GetDateTime(1),
+                    Day = DateTime.Parse(reader.GetString(1)),
                     Name = reader.GetString(2),
                     WorkName = reader.GetString(3),
-                    Percent = reader.GetDouble(4)
+                    Percent = reader.IsDBNull(4) ? 0.0 : reader.GetDouble(4)
                 });
             }
             return worklist; // ✅ 戻り値を Task<List<Work>> にする

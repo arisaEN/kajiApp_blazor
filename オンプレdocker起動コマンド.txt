@@ -1,3 +1,0 @@
-docker build -t kajiapp_blazor .
-
-docker-compose up -d

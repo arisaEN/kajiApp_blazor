@@ -1,33 +1,46 @@
-# デバッグ コンテナーをカスタマイズする方法と、Visual Studio がこの Dockerfile を使用して
-# より高速なデバッグのためにイメージをビルドする方法については、https://aka.ms/customizecontainer をご覧ください。
-
-# このステージは、VS から高速モードで実行するときに使用されます (デバッグ構成の既定値)
+# ベースイメージ (ASP.NET 8.0)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
-# このステージは、サービス プロジェクトのビルドに使用されます
+# ビルド用イメージ (SDK 8.0)
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# csproj のパスを正しく指定
-COPY ["kajiApp_blazor/kajiApp_blazor.csproj", "kajiApp_blazor/"]
+# プロジェクトファイルを正しいパスでコピー
+COPY ["kajiApp_blazor.csproj", "./"]
 
-RUN dotnet restore "./kajiApp_blazor/kajiApp_blazor.csproj"
+# 依存関係を復元
+RUN dotnet restore "kajiApp_blazor.csproj"
+
+
+# ソースコード全体をコピー
 COPY . .
-WORKDIR "/src/kajiApp_blazor"
-RUN dotnet build "./kajiApp_blazor.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# このステージは、最終ステージにコピーするサービス プロジェクトを公開するために使用されます
+# ビルドの実行
+RUN dotnet build "kajiApp_blazor.csproj" -c Release -o /app/build
+
+# 公開用ステージ
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./kajiApp_blazor.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "kajiApp_blazor.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# このステージは、運用環境または VS から通常モードで実行している場合に使用されます
+# 実行用の最終ステージ
 FROM base AS final
 WORKDIR /app
+
+# データ保護キーの永続化ディレクトリを作成
+VOLUME /app/keys
+
+# 環境変数の設定
+ENV ASPNETCORE_ENVIRONMENT=Development \
+    ASPNETCORE_URLS=http://0.0.0.0:8080 \
+    ASPNETCORE_HTTP_PORTS=8080 \
+    DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
+    DOTNET_DATA_PROTECTION__APPLICATION_NAME=kajiApp_blazor \
+    DOTNET_DATA_PROTECTION__PERSISTENT_KEYS_PATH=/app/keys
+
+# 公開ファイルをコピー
 COPY --from=publish /app/publish .
+
+# エントリーポイント
 ENTRYPOINT ["dotnet", "kajiApp_blazor.dll"]
