@@ -7,7 +7,7 @@
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
-
+@inject Blazored.Toast.Services.IToastService ToastService
 
 <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
 <h3 class="fas fa-user-shield text-center mb-4 mt-4">管理者画面</h3>
@@ -63,6 +63,7 @@ else
     {
         if (inputPassword == "admin")
         {
+            ToastService.ShowSuccess("ログイン成功");
             isAuthenticated = true;
             isWrongPassword = false;
             await JS.InvokeVoidAsync("localStorage.setItem", "isAuthenticated", "true");
@@ -72,6 +73,7 @@ else
         }
         else
         {
+            ToastService.ShowError($"ログイン失敗");
             isWrongPassword = true;
         }
     }
@@ -93,7 +95,16 @@ else
     private async Task UpdateRecord(PaymentApprovalRecord updatedRecord)
     {
         var operation = new PaymentApprovalRecordOperation();
-        await operation.EditPaymentAsync(updatedRecord.YearMonth, updatedRecord.Payment, updatedRecord.Status);
-        await LoadPaymentApprovalRecordAsync(); // 更新後リストを再取得
+        bool isSuccess = await operation.EditPaymentAsync(updatedRecord.YearMonth, updatedRecord.Payment, updatedRecord.Status);
+
+        if (isSuccess)
+        {
+            ToastService.ShowSuccess("更新が完了しました");
+            await LoadPaymentApprovalRecordAsync(); // 更新後リストを再取得
+        }
+        else
+        {
+            ToastService.ShowError("更新に失敗しました。もう一度試してください。");
+        }
     }
 }

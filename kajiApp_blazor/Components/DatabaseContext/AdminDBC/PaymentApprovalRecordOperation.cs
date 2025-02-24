@@ -55,7 +55,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.AdminDBC
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task EditPaymentAsync(string YearMonth , int Payment, string Status)
+        public async Task<bool> EditPaymentAsync(string YearMonth, int Payment, string Status)
         {
             try
             {
@@ -63,22 +63,21 @@ namespace kajiApp_blazor.Components.DatabaseContext.AdminDBC
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
                 command.CommandText = "UPDATE payment " +
-                                                        "SET pay = @Payment, 決裁 = @Status  " +
-                                                        "WHERE yyyymm = @YearMonth ";
+                                      "SET pay = @Payment, 決裁 = @Status " +
+                                      "WHERE yyyymm = @YearMonth";
                 command.Parameters.AddWithValue("@Payment", Payment);
                 command.Parameters.AddWithValue("@YearMonth", YearMonth);
                 command.Parameters.AddWithValue("@Status", Status);
-                await command.ExecuteNonQueryAsync();
+
+                int rowsAffected = await command.ExecuteNonQueryAsync(); // 更新された行数を取得
+                return rowsAffected > 0; // 1 以上なら成功
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"データ更新中にエラーが発生しました: {ex.Message}");
+                return false; // 失敗
             }
-
         }
-
-
-        
 
     }
 }

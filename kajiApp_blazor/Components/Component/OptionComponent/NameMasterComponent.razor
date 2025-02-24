@@ -1,5 +1,6 @@
 ﻿@using kajiApp_blazor.Components.Models.OptionModel
 @using kajiApp_blazor.Components.DatabaseContext.OptionDBC
+@inject Blazored.Toast.Services.IToastService ToastService
 
 <table class="table table-bordered table-dark">
     <thead class="table-dark">
@@ -45,21 +46,32 @@
 
     private async Task RegisterName()
     {
-        try
+        if (newName.Name != "")
         {
-            isLoading = true;
-            await new NameMaster().InsertNameMasterAsync(newName);
-            Console.WriteLine("データを登録しました");
-            AppState.NotifyStateChanged();
+            try
+            {
+                isLoading = true;
+                await new NameMaster().InsertNameMasterAsync(newName);
+                Console.WriteLine("データを登録しました");
+                ToastService.ShowSuccess("データを登録しました");
+                newName.Name = "";
+                AppState.NotifyStateChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"データ登録中にエラーが発生しました: {ex.Message}");
+                ToastService.ShowError($"データ登録中にエラーが発生しました: {ex.Message}");
+            }
+            finally
+            {
+                isLoading = false;
+                await InvokeAsync(StateHasChanged);
+            }
         }
-        catch (Exception ex)
+        else
         {
-            Console.WriteLine($"データ登録中にエラーが発生しました: {ex.Message}");
-        }
-        finally
-        {
-            isLoading = false;
-            await InvokeAsync(StateHasChanged);
+            ToastService.ShowWarning($"名前を入力して登録してください");
+
         }
     }
 }

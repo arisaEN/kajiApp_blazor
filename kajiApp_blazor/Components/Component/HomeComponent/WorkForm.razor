@@ -12,7 +12,7 @@
 
 <div class="card bg-dark text-white shadow-lg rounded">
     <div class="card-body">
-        
+
         <EditForm Model="FormModel" OnValidSubmit="HandleSubmit">
             <DataAnnotationsValidator />
             <input type="hidden" @bind="FormModel.WorkId" />
@@ -113,6 +113,10 @@
             await TodayWorkRegistration.SaveToDatabaseAsync();
             ToastService.ShowSuccess("家事記録成功しました！");
             Console.WriteLine("データを登録しました");
+            FormModel.WorkName = ""; // 家事名をリセット
+            FormModel.WorkId = default; // 家事IDもリセット
+            // FormModel.Percent = default; 割合もリセット
+            
 
             // 状態変更を通知
             AppState.NotifyStateChanged();
