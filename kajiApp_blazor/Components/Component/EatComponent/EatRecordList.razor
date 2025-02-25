@@ -106,7 +106,7 @@ else
     private bool isEditVisible = false;
     private int selectedYear;
     private int selectedMonth;
-    private int newAmount;
+    private int? newAmount = null;
     private List<EatDetailRecord>? editRecords;
 
     /// <summary>
@@ -183,32 +183,23 @@ else
     {
         try
         {
-            // 入力値のバリデーション
-            if (selectedYear == 0 || selectedMonth == 0 || newAmount <= 0)
+            if (selectedYear == 0 || selectedMonth == 0 || !newAmount.HasValue || newAmount <= 0)
             {
                 ToastService.ShowWarning("すべての項目を正しく入力してください");
                 return;
             }
 
-            isLoading = true; // ローディング開始
-            await InvokeAsync(StateHasChanged); // UI更新
+            isLoading = true;
+            await InvokeAsync(StateHasChanged);
 
             var eatDetailEdit = new EatDetailEdit();
-            // 登録
-            await eatDetailEdit.InsertEatDetailAsync(selectedYear, selectedMonth, newAmount);
-
-            // 明細を eat テーブルに反映更新
+            await eatDetailEdit.InsertEatDetailAsync(selectedYear, selectedMonth, newAmount.Value);
             await eatDetailEdit.EatDetailSumAsync();
-
-            // 最新の食費記録を取得
             await ReloadData();
-
-            // 状態変更を通知
             AppState.NotifyStateChanged();
 
-            isInputVisible = false;
+            newAmount = null; // 入力値をリセット
 
-            // 成功メッセージ
             ToastService.ShowSuccess("データが正常に登録されました");
         }
         catch (Exception ex)
@@ -217,7 +208,7 @@ else
         }
         finally
         {
-            isLoading = false; // ローディング終了
+            isLoading = false;
             await InvokeAsync(StateHasChanged);
         }
     }

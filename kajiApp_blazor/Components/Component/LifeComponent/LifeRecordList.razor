@@ -3,7 +3,7 @@
 @inject Blazored.Toast.Services.IToastService ToastService
 
 <div class="card bg-dark text-white shadow-lg rounded">
-    <div class="card-body">
+
         @if (isLoading)
         {
             <div class="d-flex justify-content-center">
@@ -18,53 +18,54 @@
         }
         else
         {
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped w-100 eat-table text-white bg-dark">
-                    <thead class="table-dark text-center">
-                        <tr>
-                            <th class="text-white">年</th>
-                            <th class="text-white">月</th>
-                            <th class="text-white">家賃</th>
-                            <th class="text-white">水道代</th>
-                            <th class="text-white">電気代</th>
-                            <th class="text-white">ガス代</th>
-                            <th class="text-white">操作</th>
+        <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
+            <table class="table table-bordered table-striped eat-table text-white bg-dark">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th class="text-white">年</th>
+                        <th class="text-white">月</th>
+                        <th class="text-white">家賃</th>
+                        <th class="text-white">水道代</th>
+                        <th class="text-white">電気代</th>
+                        <th class="text-white">ガス代</th>
+                        <th class="text-white">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var l in liferecord)
+                    {
+                        <tr class="text-center text-white">
+                            <td>@l.year</td>
+                            <td>@l.month</td>
+                            @if (editRecord == l)
+                            {
+                                <td><input type="number" class="form-control" @bind="editRent" /></td>
+                                <td><input type="number" class="form-control" @bind="editWater" /></td>
+                                <td><input type="number" class="form-control" @bind="editElectricity" /></td>
+                                <td><input type="number" class="form-control" @bind="editGas" /></td>
+                                <td>
+                                    <button class="btn btn-success" @onclick="UpdateRecord">更新</button>
+                                    <button class="btn btn-secondary" @onclick="CancelEdit">❌️</button>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>@l.rent</td>
+                                <td>@l.water</td>
+                                <td>@l.electricity</td>
+                                <td>@l.gas</td>
+                                <td>
+                                    <button class="btn btn-primary" @onclick="() => EditRecord(l)">編集</button>
+                                </td>
+                            }
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var l in liferecord)
-                        {
-                            <tr class="text-center text-white">
-                                <td>@l.year</td>
-                                <td>@l.month</td>
-                                @if (editRecord == l)
-                                {
-                                    <td><input type="number" class="form-control" @bind="editRent" /></td>
-                                    <td><input type="number" class="form-control" @bind="editWater" /></td>
-                                    <td><input type="number" class="form-control" @bind="editElectricity" /></td>
-                                    <td><input type="number" class="form-control" @bind="editGas" /></td>
-                                    <td>
-                                        <button class="btn btn-success" @onclick="UpdateRecord">更新</button>
-                                        <button class="btn btn-secondary" @onclick="CancelEdit">❌️</button>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>@l.rent</td>
-                                    <td>@l.water</td>
-                                    <td>@l.electricity</td>
-                                    <td>@l.gas</td>
-                                    <td>
-                                        <button class="btn btn-primary" @onclick="() => EditRecord(l)">編集</button>
-                                    </td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
+        </div>
+
         }
-    </div>
+
 </div>
 
 @code {

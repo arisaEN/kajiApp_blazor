@@ -22,7 +22,7 @@
                 <table class="table table-dark table-striped table-hover text-center">
                     <thead class="table-light text-dark">
                         <tr>
-                            <th>ID</th>
+
                             <th>Day</th>
                             <th>Name</th>
                             <th>Work</th>
@@ -33,11 +33,11 @@
                         @foreach (var w in worklist)
                         {
                             <tr>
-                                <td>@w.Id</td>
-                                <td>@w.Day.ToShortDateString()</td>
-                                <td>@w.Name</td>
-                                <td>@w.WorkName</td>
-                                <td>@w.Percent %</td>
+
+                                <td style="font-size: 0.8rem;">@w.Day.ToString("M/d")</td>
+                                <td style="font-size: 0.8rem;">@w.Name</td>
+                                <td style="font-size: 0.8rem;">@w.WorkName</td>
+                                <td style="font-size: 0.8rem;">@w.Percent %</td>
                             </tr>
                         }
                     </tbody>
