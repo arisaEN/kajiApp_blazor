@@ -95,10 +95,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
                 using var command = new SQLiteCommand(
                     "INSERT INTO works (day, name, work_id, work, percent) VALUES (@day, @name, @work_id, @work_name, @percent)",
                     connection);
-
                 command.Parameters.AddWithValue("@day", FormModel.Day.ToString("yyyy-MM-dd"));
-
-
                 command.Parameters.AddWithValue("@name", FormModel.Name);
                 command.Parameters.AddWithValue("@work_id", FormModel.WorkId);
                 command.Parameters.AddWithValue("@work_name", FormModel.WorkName);
