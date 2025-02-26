@@ -35,8 +35,8 @@
                     @foreach (var l in liferecord)
                     {
                         <tr class="text-center text-white">
-                            <td>@l.year</td>
-                            <td>@l.month</td>
+                            <td>@l.Year</td>
+                            <td>@l.Month</td>
                             @if (editRecord == l)
                             {
                                 <td><input type="number" class="form-control" @bind="editRent" /></td>
@@ -50,10 +50,10 @@
                             }
                             else
                             {
-                                <td>@l.rent</td>
-                                <td>@l.water</td>
-                                <td>@l.electricity</td>
-                                <td>@l.gas</td>
+                                <td>@l.Rent</td>
+                                <td>@l.Water</td>
+                                <td>@l.Electricity</td>
+                                <td>@l.Gas</td>
                                 <td>
                                     <button class="btn btn-primary" @onclick="() => EditRecord(l)">編集</button>
                                 </td>
@@ -80,11 +80,11 @@
     private void EditRecord(Models.LifeModel.LifeRecord record)
     {
         editRecord = record;
-        editId = record.id;
-        editRent = record.rent;
-        editWater = record.water;
-        editElectricity = record.electricity;
-        editGas = record.gas;
+        editId = record.Id;
+        editRent = record.Rent;
+        editWater = record.Water;
+        editElectricity = record.Electricity;
+        editGas = record.Gas;
     }
 
     private void CancelEdit()
@@ -100,11 +100,11 @@
             if (editRecord != null)
             {
                 // ユーザーが入力した値を editRecord に反映
-                editRecord.id = editId;
-                editRecord.rent = editRent;
-                editRecord.water = editWater;
-                editRecord.electricity = editElectricity;
-                editRecord.gas = editGas;
+                editRecord.Id = editId;
+                editRecord.Rent = editRent;
+                editRecord.Water = editWater;
+                editRecord.Electricity = editElectricity;
+                editRecord.Gas = editGas;
 
                 var lifeDataEdit = new LifeDataEdit();
                 await lifeDataEdit.UpdateEatDetailAsync(editRecord); // 更新処理

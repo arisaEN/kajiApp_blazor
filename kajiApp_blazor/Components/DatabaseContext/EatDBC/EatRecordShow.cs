@@ -30,9 +30,9 @@ namespace kajiApp_blazor.Components.DatabaseContext.EatDBC
             {
                 eatrecord.Add(new EatRecord
                 {
-                    year = reader.GetInt32(0),
-                    month = reader.GetInt32(1),
-                    amount = reader.GetInt32(2)
+                    Year = reader.GetString(0),
+                    Month = reader.GetString(1),
+                    Amount = reader.GetInt32(2)
                 });
             }
             return eatrecord; // ✅ 戻り値を Task<List<Work>> にする

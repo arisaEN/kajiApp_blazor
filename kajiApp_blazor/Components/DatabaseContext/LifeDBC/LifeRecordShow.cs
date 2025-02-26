@@ -29,13 +29,13 @@ namespace kajiApp_blazor.Components.DatabaseContext.LifeDBC
             {
                 eatrecord.Add(new LifeRecord
                 {
-                    id = reader.GetInt32(0),
-                    year = reader.GetInt32(1),
-                    month = reader.GetInt32(2),
-                    rent = reader.GetInt32(3),
-                    water = reader.GetInt32(4),
-                    electricity = reader.GetInt32(5),
-                    gas = reader.GetInt32(6)
+                    Id = reader.GetInt32(0),
+                    Year = reader.GetString(1),
+                    Month = reader.GetString(2),
+                    Rent = reader.GetInt32(3),
+                    Water = reader.GetInt32(4),
+                    Electricity = reader.GetInt32(5),
+                    Gas = reader.GetInt32(6)
                 });
             }
             return eatrecord; // ✅ 戻り値を Task<List<Work>> にする

@@ -16,23 +16,36 @@ namespace kajiApp_blazor.Components.DatabaseContext.LifeDBC
         /// <param name="record"></param>
         public async Task UpdateEatDetailAsync(Models.LifeModel.LifeRecord record)
         {
-            using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText = "UPDATE life_detail " +
-                                                      "SET rent = @rent, " +  // ← カンマ追加
-                                                      "    water = @water, " + // ← カンマ追加
-                                                      "    electricity = @electricity, " + // ← カンマ追加
-                                                      "    gas = @gas " + // ← 最後は不要
-                                                      "WHERE id = @id";
+            try
+            {
+                using var connection = new SqliteConnection(_connectionString);
+                await connection.OpenAsync();
 
-            command.Parameters.AddWithValue("@id", record.id);
-            command.Parameters.AddWithValue("@rent", record.rent);
-            command.Parameters.AddWithValue("@water", record.water);
-            command.Parameters.AddWithValue("@electricity", record.electricity);
-            command.Parameters.AddWithValue("@gas", record.gas);
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+            UPDATE life_detail 
+            SET rent = @rent, 
+                water = @water, 
+                electricity = @electricity, 
+                gas = @gas 
+            WHERE id = @id";
 
-            await command.ExecuteNonQueryAsync();
+                command.Parameters.AddWithValue("@id", record.Id);
+                command.Parameters.AddWithValue("@rent", record.Rent);
+                command.Parameters.AddWithValue("@water", record.Water);
+                command.Parameters.AddWithValue("@electricity", record.Electricity);
+                command.Parameters.AddWithValue("@gas", record.Gas);
+
+                int affectedRows = await command.ExecuteNonQueryAsync();
+                if (affectedRows == 0)
+                {
+                    Debug.WriteLine($"更新失敗: ID {record.Id} のレコードが見つかりません");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"データ更新エラー: {ex.Message}");
+            }
         }
     }
     

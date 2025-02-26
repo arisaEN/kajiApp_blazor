@@ -4,18 +4,18 @@
     {
 
         //中身変更すること
-        public int year { get; set; }
-        public int month { get; set; }
-        public int amount { get; set; }
+        public string? Year { get; set; }
+        public string? Month { get; set; }
+        public int Amount { get; set; }
 
     }
 
     public class EatDetailRecord
     {
-        public int id { get; set; }
-        public int year { get; set; }
-        public int month { get; set; }
-        public int amount { get; set; }
-       public string yyyymm { get; set; } = string.Empty;
+        public int Id { get; set; }
+        public string? Year { get; set; }
+        public string? Month { get; set; }
+        public int Amount { get; set; }
+       public string? Yyyymm { get; set; } = string.Empty;
     }
 }

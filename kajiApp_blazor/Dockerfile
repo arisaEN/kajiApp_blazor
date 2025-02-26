@@ -3,8 +3,11 @@
 # このステージは、VS から高速モードで実行するときに使用されます (デバッグ構成の既定値)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 80
+EXPOSE 2001
 
+
+# ASP.NET Core がポート 1001 でリッスンするように設定
+ENV ASPNETCORE_URLS="http://+:2001"
 
 # このステージは、サービス プロジェクトのビルドに使用されます
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build

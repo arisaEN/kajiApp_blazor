@@ -53,12 +53,12 @@ else
                 @foreach (var e in eatrecord)
                 {
                     <tr class="text-center text-white">
-                        <td>@e.year</td>
-                        <td>@e.month</td>
-                        <td>@e.amount</td>
+                        <td>@e.Year</td>
+                        <td>@e.Month</td>
+                        <td>@e.Amount</td>
                         <td>
-                            <button class="btn btn-success" @onclick="() => ShowInputForm(e.year, e.month)">入力</button>
-                            <button class="btn btn-warning" @onclick="() => ShowEditForm(e.year, e.month)">編集</button>
+                            <button class="btn btn-success" @onclick="() => ShowInputForm(e.Year, e.Month)">入力</button>
+                            <button class="btn btn-warning" @onclick="() => ShowEditForm(e.Year, e.Month)">編集</button>
                         </td>
                     </tr>
                 }
@@ -84,10 +84,10 @@ else
                 @foreach (var record in editRecords)
                 {
                     <tr>
-                        <td>@record.id</td>
-                        <td><input type="number" class="form-control" @bind="record.amount" /></td>
+                        <td>@record.Id</td>
+                        <td><input type="number" class="form-control" @bind="record.Amount" /></td>
                         <td><button class="btn btn-primary" @onclick="() => UpdateRecord(record)">更新</button></td>
-                        <td>@record.yyyymm</td>
+                        <td>@record.Yyyymm</td>
                     </tr>
                 }
             </tbody>
@@ -104,9 +104,9 @@ else
     private bool isLoading = false;
     private bool isInputVisible = false;
     private bool isEditVisible = false;
-    private int selectedYear;
-    private int selectedMonth;
-    private int? newAmount = null;
+    private string? selectedYear;
+    private string? selectedMonth;
+    private decimal? newAmount;
     private List<EatDetailRecord>? editRecords;
 
     /// <summary>
@@ -152,7 +152,7 @@ else
     /// <param name="year"></param>
     /// <param name="month"></param>
     /// <returns></returns>
-    private async Task ShowInputForm(int year, int month)
+    private async Task ShowInputForm(string year, string month)
     {
         selectedYear = year;
         selectedMonth = month;
@@ -165,7 +165,7 @@ else
     /// <param name="year"></param>
     /// <param name="month"></param>
     /// <returns></returns>
-    private async Task ShowEditForm(int year, int month)
+    private async Task ShowEditForm(string year, string month)
     {
         selectedYear = year;
         selectedMonth = month;
@@ -183,7 +183,10 @@ else
     {
         try
         {
-            if (selectedYear == 0 || selectedMonth == 0 || !newAmount.HasValue || newAmount <= 0)
+            // selectedYear と selectedMonth は string? 型なので null チェック後に int に変換
+             if (string.IsNullOrWhiteSpace(selectedYear) ||
+             string.IsNullOrWhiteSpace(selectedMonth) ||
+             !newAmount.HasValue)
             {
                 ToastService.ShowWarning("すべての項目を正しく入力してください");
                 return;
@@ -193,7 +196,7 @@ else
             await InvokeAsync(StateHasChanged);
 
             var eatDetailEdit = new EatDetailEdit();
-            await eatDetailEdit.InsertEatDetailAsync(selectedYear, selectedMonth, newAmount.Value);
+            await eatDetailEdit.InsertEatDetailAsync(selectedYear, selectedMonth, newAmount);
             await eatDetailEdit.EatDetailSumAsync();
             await ReloadData();
             AppState.NotifyStateChanged();
@@ -232,7 +235,7 @@ else
             }
 
             var eatDetailEdit = new EatDetailEdit();
-            await eatDetailEdit.UpdateEatDetailAsync(record.id, record.amount); // idを使用して更新
+            await eatDetailEdit.UpdateEatDetailAsync(record.Id, record.Amount); // idを使用して更新
             await eatDetailEdit.EatDetailSumAsync();
             await ReloadData();
             ToastService.ShowSuccess("データが正常に更新されました");

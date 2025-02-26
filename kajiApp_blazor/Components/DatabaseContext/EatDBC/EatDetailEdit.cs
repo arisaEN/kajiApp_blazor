@@ -17,7 +17,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.EatDBC
         /// <param name="month"></param>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public async Task InsertEatDetailAsync(int year, int month, decimal amount)
+        public async Task InsertEatDetailAsync(string year, string month, decimal? amount)
         {
             const string query = "INSERT INTO eat_detail (year, month, amount) VALUES (@year, @month, @amount)";
 
@@ -59,7 +59,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.EatDBC
         /// 明細一覧取得
         /// </summary>
         /// <returns></returns>
-        public async Task<List<EatDetailRecord>> GetEatDetailAsync(int year, int month)
+        public async Task<List<EatDetailRecord>> GetEatDetailAsync(string year, string month)
         {
             using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync(); // ✅ OpenAsync() を使う
@@ -80,9 +80,9 @@ namespace kajiApp_blazor.Components.DatabaseContext.EatDBC
             {
                 eatDetailRecord.Add(new EatDetailRecord
                 {
-                    id = reader.GetInt32(0),
-                    amount = reader.GetInt32(1),
-                    yyyymm = reader.GetString(2) // 日時型のカラムなら GetDateTime()
+                    Id = reader.GetInt32(0),
+                    Amount = reader.GetInt32(1),
+                    Yyyymm = reader.GetString(2) // 日時型のカラムなら GetDateTime()
                 });
             }
 

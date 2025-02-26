@@ -23,9 +23,9 @@ namespace kajiApp_blazor.Components.DatabaseContext
 
         private static void InsertCurrentMonthPaymentDetail(SQLiteConnection con)
         {
-            int currentYear = DateTime.Now.Year;
-            int currentMonth = DateTime.Now.Month;
-            string yyyymm = $"{currentYear}{currentMonth:D2}";
+            string currentYear = DateTime.Now.Year.ToString("0000");
+            string currentMonth = DateTime.Now.Month.ToString("00");
+            string yyyymm = $"{currentYear}{currentMonth}";
 
             using (var cmd = new SQLiteCommand("SELECT COUNT(*) FROM payment WHERE yyyymm = @yyyymm", con))
             {
@@ -48,8 +48,8 @@ namespace kajiApp_blazor.Components.DatabaseContext
 
         private static void InsertCurrentMonthEatRecord(SQLiteConnection con)
         {
-            int currentYear = DateTime.Now.Year;
-            int currentMonth = DateTime.Now.Month;
+            string currentYear = DateTime.Now.Year.ToString("0000");
+            string currentMonth = DateTime.Now.Month.ToString("00");
 
             using (var cmd = new SQLiteCommand("SELECT 1 FROM eat WHERE year = @year AND month = @month", con))
             {
@@ -74,8 +74,8 @@ namespace kajiApp_blazor.Components.DatabaseContext
 
         private static void InsertLifeDetailIfNotExists(SQLiteConnection con)
         {
-            int currentYear = DateTime.Now.Year;
-            int currentMonth = DateTime.Now.Month;
+            string currentYear = DateTime.Now.Year.ToString("0000");
+            string currentMonth = DateTime.Now.Month.ToString("00");
 
             using (var cmd = new SQLiteCommand("SELECT COUNT(*) FROM life_detail WHERE year = @year AND month = @month", con))
             {

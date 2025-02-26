@@ -2,16 +2,16 @@
 {
     public class LifeRecord
     {
-        public int id { get; set; }
-        public int year { get; set; }
-        public int month { get; set; }
+        public int Id { get; set; }
+        public string? Year { get; set; }
+        public string? Month { get; set; }
         //家賃
-        public int rent { get; set; }
+        public int Rent { get; set; }
         //水道
-        public int water { get; set; }
+        public int Water { get; set; }
         //電気
-        public int electricity { get; set; }
+        public int Electricity { get; set; }
         //ガス
-        public int gas { get; set; }
+        public int Gas { get; set; }
     }
 }
