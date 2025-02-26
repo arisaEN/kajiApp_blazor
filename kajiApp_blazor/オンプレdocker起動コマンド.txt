@@ -1,7 +1,21 @@
+cd C:\dev\kajiApp_blazor\kajiApp_blazor
+
 docker build --no-cache -t kajiappblazor2 .
+
+
+
+
+docker run -d -p 8080:8080 --name kajiappblazor2 kajiappblazor2
+
+docker run kajiappblazor:latest -p 8080:8080 --name kajiappblazor
+
 
 
 docker-compose up -d
 
-docker run -d -p 8080:8080 --name kajiappblazor2 kajiappblazor2
 
+
+
+
+docker build --no-cache -t kajid . -f kajiApp_blazor/Dockerfile
+docker build --no-cache -t kajid . -f kajiApp_blazor/Dockerfile
