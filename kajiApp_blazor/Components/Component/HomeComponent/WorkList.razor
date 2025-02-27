@@ -1,4 +1,4 @@
-﻿@using kajiApp_blazor.Components.Models.HomeModel
+﻿@using kajiApp_blazor.Components.DatabaseContext
 @implements IDisposable
 
 <div class="card bg-dark text-white shadow-lg rounded">
@@ -68,8 +68,8 @@
         {
             isLoading = true; // ローディング開始
             await InvokeAsync(StateHasChanged); // UI更新
-            var workListShow = new WorkListShow();
-            worklist = await workListShow.GetWorksAsync();
+            var _homeDatabaseContext = new HomeDatabaseContext();
+            worklist = await _homeDatabaseContext.GetWorksAsync();
         }
         catch (Exception ex)
         {

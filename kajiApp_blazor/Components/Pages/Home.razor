@@ -1,7 +1,7 @@
 ﻿@page "/"
 @using kajiApp_blazor.Components.Component.HomeComponent
 @using kajiApp_blazor.Components.Models.HomeModel
-@using kajiApp_blazor.Components.DatabaseContext.HomeDBC
+@using kajiApp_blazor.Components.DatabaseContext
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @using kajiApp_blazor.Components
 @inject NavigationManager Navigation
@@ -55,8 +55,8 @@
     /// <returns></returns>
     private async Task LoadWorksAsync()
     {
-        var workListShow = new WorkListShow();
-        worklist = await workListShow.GetWorksAsync();
+        var _homeDatabaseContext = new HomeDatabaseContext();
+        worklist = await _homeDatabaseContext.GetWorksAsync();
         if (worklist != null)
         {
             //worklistに値が入ったらUI更新
@@ -69,8 +69,8 @@
     /// <returns></returns>
     private async Task PointSummaryAsync()
     {
-        var pointSummaryShow = new PointSummaryShow();
-        pointsummary = await pointSummaryShow.GetPointSumListAsync();
+        var _homeDatabaseContext = new HomeDatabaseContext();
+        pointsummary = await _homeDatabaseContext.GetPointSumListAsync();
         if (pointsummary != null)
         {
             //pointに値が入ったらUI更新

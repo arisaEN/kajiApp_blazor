@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime JS
 @using kajiApp_blazor.Components.Models.HomeModel
-@using kajiApp_blazor.Components.DatabaseContext.HomeDBC
+@using kajiApp_blazor.Components.DatabaseContext
 @implements IDisposable
 
 <div class="card bg-dark text-white shadow-lg rounded-3 m-0">
@@ -81,8 +81,8 @@
             isLoading = true; // ローディング開始
             await InvokeAsync(StateHasChanged); // UI更新
             //DBCからインスタンス取得、
-            var pointSumList = new PointSummaryShow();
-            pointsummary = await pointSumList.GetPointSumListAsync();
+            var _homeDatabaseContext = new HomeDatabaseContext();
+            pointsummary = await _homeDatabaseContext.GetPointSumListAsync();
         }
         catch (Exception ex)
         {
