@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace kajiApp_blazor.Components.Models.HomeModel
 
 {
-    public class TodayWork
+    public class WorkForm
     {
 
         public int WorkId { get; set; }

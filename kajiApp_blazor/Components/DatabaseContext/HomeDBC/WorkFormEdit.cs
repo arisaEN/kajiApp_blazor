@@ -19,7 +19,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
     {
         private readonly string _connectionString = "Data Source=database.db";
 
-        public TodayWork FormModel { get; private set; } = new TodayWork();
+        public WorkForm FormModel { get; private set; } = new WorkForm();
 
         // 名前リスト作成（DBから取得）
         public List<string> NameList { get; private set; } = new();
