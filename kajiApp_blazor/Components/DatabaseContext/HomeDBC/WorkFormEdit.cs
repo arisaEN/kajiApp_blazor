@@ -15,7 +15,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
     /// <summary>
     /// 登録画面を作る
     /// </summary>
-    public class TodayWorkRegistration
+    public class WorkFormEdit
     {
         private readonly string _connectionString = "Data Source=database.db";
 
@@ -30,7 +30,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
         /// <summary>
         /// コンストラクタでDBからリストに値を入れて親に返す
         /// </summary>
-        public TodayWorkRegistration()
+        public WorkFormEdit()
         {
             LoadDataFromDatabase();
         }
