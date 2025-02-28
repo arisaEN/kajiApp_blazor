@@ -14,7 +14,7 @@
         <i class="fas fa-house me-2"></i> 実績入力フォーム
     </h1>
     <div class="px-0">
-        <WorkForm workFormEdit="todayworkregistration" />
+        <WorkForm workFormEdit="workFormEdit" />
     </div>
 
     <div class="text-center py-1 mt-1border-bottom border-secondary">
@@ -39,7 +39,7 @@
     private List<Models.HomeModel.WorkList>? worklist = null;
     private List<Models.HomeModel.PointSummary>? pointsummary = null;
     //インスタンス生成で入力フォームに使うNameListとWorkList作成
-    private WorkFormEdit todayworkregistration = new WorkFormEdit();
+    private WorkFormEdit workFormEdit = new WorkFormEdit();
 
     //非同期で実績リスト取得
     protected override async Task OnInitializedAsync()
