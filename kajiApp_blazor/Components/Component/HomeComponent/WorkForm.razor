@@ -29,7 +29,7 @@
             <div class="mb-3">
                 <label for="name" class="form-label">名前</label>
                 <InputSelect id="name" class="form-select" @bind-Value="FormModel.Name">
-                    @foreach (var name in todayWorkRegistration.NameList)
+                    @foreach (var name in workFormEdit.NameList)
                     {
                         <option value="@name">@name</option>
                     }
@@ -40,8 +40,8 @@
             <!-- 家事名選択 -->
             <div class="mb-3">
                 <label for="workSelect" class="form-label">家事名</label>
-                <InputSelect id="workSelect" class="form-select" @bind-Value="FormModel.WorkId" @onchange="todayWorkRegistration.UpdateWorkName">
-                    @foreach (var work in todayWorkRegistration.WorkList)
+                <InputSelect id="workSelect" class="form-select" @bind-Value="FormModel.WorkId" @onchange="workFormEdit.UpdateWorkName">
+                    @foreach (var work in workFormEdit.WorkList)
                     {
                         <option value="@work.Id">@work.Name</option>
                     }
@@ -75,14 +75,14 @@
 @code {
     //フォーム初期化
     private bool isLoading = false; // ローディング状態を管理
-    [Parameter] public WorkFormEdit todayWorkRegistration { get; set; } = default!;
+    [Parameter] public WorkFormEdit workFormEdit { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;
 
     // private TodayWork FormModel => todayWorkRegistration.FormModel;
 
     private Models.HomeModel.WorkForm FormModel
     {
-        get { return todayWorkRegistration.FormModel; }
+        get { return workFormEdit.FormModel; }
     }
 
 
@@ -103,7 +103,7 @@
             isLoading = true; // ローディング開始
 
             // WorkIdからWorkNameを取得
-            var selectedWork = todayWorkRegistration.WorkList
+            var selectedWork = workFormEdit.WorkList
                                 .FirstOrDefault(w => w.Id == FormModel.WorkId);
             if (selectedWork != null)
             {
@@ -117,7 +117,7 @@
             }
 
             // データベースに登録
-            await todayWorkRegistration.SaveToDatabaseAsync();
+            await workFormEdit.SaveToDatabaseAsync();
             ToastService.ShowSuccess("家事記録成功しました！");
             Console.WriteLine("データを登録しました");
             FormModel.WorkName = ""; // 家事名をリセット
