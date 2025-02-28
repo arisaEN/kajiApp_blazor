@@ -65,9 +65,6 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
                 }
             }
         }
-
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -80,7 +77,6 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
                 FormModel.WorkName = selectedWork?.Name ?? "";
             }
         }
-
         /// <summary>
         /// 登録処理
         /// </summary>
@@ -91,7 +87,6 @@ namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
             {
                 using var connection = new SQLiteConnection(_connectionString);
                 await connection.OpenAsync();
-
                 using var command = new SQLiteCommand(
                     "INSERT INTO works (day, name, work_id, work, percent) VALUES (@day, @name, @work_id, @work_name, @percent)",
                     connection);
