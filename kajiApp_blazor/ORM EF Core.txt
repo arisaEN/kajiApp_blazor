@@ -1,0 +1,9 @@
+
+インストール
+dotnet tool install --global dotnet-ef
+
+バージョン確認
+dotnet ef --version
+
+スキャフォルド
+dotnet ef dbcontext scaffold "Data Source=database.db" Microsoft.EntityFrameworkCore.Sqlite -o Components\Component\Models -c HomeDatabaseContext --force

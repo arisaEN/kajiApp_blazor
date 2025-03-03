@@ -6,7 +6,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app  
 # コンテナ内部でポート 2001 を開放する
-EXPOSE 2001
+EXPOSE 2001  
 
 # (2) ASP.NET Core の実行ポートを設定
 # コンテナ内で ASP.NET Core アプリがポート 2001 でリッスンするようにする
@@ -41,6 +41,7 @@ RUN dotnet publish "./kajiApp_blazor.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 
 # (8) 本番環境のコンテナを作成
 # ビルド済みのアプリを `base` イメージにコピーし、実
+行環境を作成する
 FROM base AS final
 WORKDIR /app  
 COPY --from=publish /app/publish .  
