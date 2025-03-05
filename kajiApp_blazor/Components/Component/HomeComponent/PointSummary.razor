@@ -1,7 +1,9 @@
 ﻿@inject IJSRuntime JS
 @using kajiApp_blazor.Components.DataModels.HomeModel
-@using kajiApp_blazor.Components.DatabaseContext
+@using kajiApp_blazor.Components.DBx
 @implements IDisposable
+@using kajiApp_blazor.Components.Models;
+@inject DatabaseContext DbContext
 
 <div class="card bg-dark text-white shadow-lg rounded-3 m-0">
     <div class="card-body p-4">
@@ -81,7 +83,7 @@
             isLoading = true; // ローディング開始
             await InvokeAsync(StateHasChanged); // UI更新
             //DBCからインスタンス取得、
-            var _homeDatabaseContext = new HomeDatabaseContext();
+            var _homeDatabaseContext = new HomeDatabaseContext(DbContext);
             pointsummary = await _homeDatabaseContext.GetPointSumListAsync();
         }
         catch (Exception ex)

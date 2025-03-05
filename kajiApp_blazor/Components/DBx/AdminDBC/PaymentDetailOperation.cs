@@ -1,7 +1,7 @@
 ﻿using kajiApp_blazor.Components.DataModels.AdminModel;
 using Microsoft.Data.Sqlite;
 
-namespace kajiApp_blazor.Components.DatabaseContext.AdminDBC
+namespace kajiApp_blazor.Components.DBx.AdminDBC
 {
     public class PaymentDetailOperation
     {

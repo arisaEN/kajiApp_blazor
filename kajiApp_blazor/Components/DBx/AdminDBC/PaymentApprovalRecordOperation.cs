@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace kajiApp_blazor.Components.DatabaseContext.AdminDBC
+namespace kajiApp_blazor.Components.DBx.AdminDBC
 {
     public class PaymentApprovalRecordOperation
     {

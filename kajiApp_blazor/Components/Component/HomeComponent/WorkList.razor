@@ -1,5 +1,7 @@
-﻿@using kajiApp_blazor.Components.DatabaseContext
+﻿@using kajiApp_blazor.Components.DBx
 @implements IDisposable
+@inject DatabaseContext DbContext
+@using kajiApp_blazor.Components.Models;
 
 <div class="card bg-dark text-white shadow-lg rounded">
     <div class="card-body">
@@ -68,7 +70,7 @@
         {
             isLoading = true; // ローディング開始
             await InvokeAsync(StateHasChanged); // UI更新
-            var _homeDatabaseContext = new HomeDatabaseContext();
+            var _homeDatabaseContext = new HomeDatabaseContext(DbContext);
             worklist = await _homeDatabaseContext.GetWorksAsync();
         }
         catch (Exception ex)

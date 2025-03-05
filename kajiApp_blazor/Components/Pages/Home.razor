@@ -1,12 +1,14 @@
 ﻿@page "/"
 @using kajiApp_blazor.Components.Component.HomeComponent
 @using kajiApp_blazor.Components.DataModels.HomeModel
-@using kajiApp_blazor.Components.DatabaseContext
+@using kajiApp_blazor.Components.DBx
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @using kajiApp_blazor.Components
+@using kajiApp_blazor.Components.Models;
 @inject NavigationManager Navigation
 @inject HttpClient Http
 @inject IConfiguration Configuration
+@inject DatabaseContext DbContext
 
 <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
 <div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
@@ -55,7 +57,7 @@
     /// <returns></returns>
     private async Task LoadWorksAsync()
     {
-        var _homeDatabaseContext = new HomeDatabaseContext();
+        var _homeDatabaseContext = new HomeDatabaseContext(DbContext);
         worklist = await _homeDatabaseContext.GetWorksAsync();
         if (worklist != null)
         {
@@ -69,7 +71,7 @@
     /// <returns></returns>
     private async Task PointSummaryAsync()
     {
-        var _homeDatabaseContext = new HomeDatabaseContext();
+        var _homeDatabaseContext = new HomeDatabaseContext(DbContext);
         pointsummary = await _homeDatabaseContext.GetPointSumListAsync();
         if (pointsummary != null)
         {

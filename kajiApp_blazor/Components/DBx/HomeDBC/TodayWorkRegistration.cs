@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
+namespace kajiApp_blazor.Components.DBx.HomeDBC
 {
 
 

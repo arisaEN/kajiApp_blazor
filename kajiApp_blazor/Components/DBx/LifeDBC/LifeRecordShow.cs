@@ -4,7 +4,7 @@ using kajiApp_blazor.Components.DataModels.EatModel;
 using kajiApp_blazor.Components.DataModels.LifeModel;
 using Microsoft.Data.Sqlite;
 
-namespace kajiApp_blazor.Components.DatabaseContext.LifeDBC
+namespace kajiApp_blazor.Components.DBx.LifeDBC
 {
     public class LifeRecordShow
     {

@@ -4,9 +4,11 @@ using kajiApp_blazor.Components.DataModels.HomeModel;
 using Microsoft.Data.Sqlite;
 using kajiApp_blazor.Components.DataModels;
 using Microsoft.EntityFrameworkCore;
+using kajiApp_blazor.Components.Models;
 
 
-namespace kajiApp_blazor.Components.DatabaseContext
+
+namespace kajiApp_blazor.Components.DBx
 {
     public class HomeDatabaseContext
     {
@@ -20,27 +22,31 @@ namespace kajiApp_blazor.Components.DatabaseContext
         }
 
 
-        public async Task<List<WorkList>> GetWorksAsync()
+        public async Task<List<DataModels.HomeModel.WorkList>> GetWorksAsync()
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
             var fromDate = today.AddDays(-5);
 
+            // まずデータベースからリストを取得（この時点では SQL クエリの範囲）
             var worklist = await _context.Works
                 .Where(w => w.Day >= fromDate && w.Day <= today)
                 .OrderByDescending(w => w.Id)
                 .Take(15)
-                .Select(w => new WorkList
-                {
-                    Id = w.Id,
-                    Day = w.Day.HasValue ? w.Day.Value.ToDateTime(TimeOnly.MinValue) : DateTime.MinValue,
-                    Name = w.Name ?? "",
-                    WorkName = w.Work1 ?? "",
-                    Percent = int.TryParse(w.Percent, out var percent) ? percent : 0
-                })
-                .ToListAsync();
+                .ToListAsync(); // ← ここでメモリに読み込む
 
-            return worklist;
+            // メモリ上で変換処理を行う（式ツリーの制約を回避）
+            var result = worklist.Select(w => new DataModels.HomeModel.WorkList
+            {
+                Id = w.Id,
+                Day = w.Day.HasValue ? w.Day.Value.ToDateTime(TimeOnly.MinValue) : DateTime.MinValue,
+                Name = w.Name ?? "",
+                WorkName = w.Work1 ?? "",
+                Percent = int.TryParse(w.Percent, out var percent) ? percent : 0
+            }).ToList(); // ← 最終的なリストを作成
+
+            return result;
         }
+
 
 
         //public async Task<List<WorkList>> GetWorksAsync() // ✅ 非同期メソッド

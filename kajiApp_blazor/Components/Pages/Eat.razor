@@ -1,7 +1,7 @@
 @page "/eat"
 @using kajiApp_blazor.Components.Component.EatComponent
 @using kajiApp_blazor.Components.DataModels.EatModel
-@using kajiApp_blazor.Components.DatabaseContext.EatDBC
+@using kajiApp_blazor.Components.DBx.EatDBC
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @using kajiApp_blazor.Components
 @inject NavigationManager Navigation
@@ -30,7 +30,7 @@
     /// <returns></returns>
     private async Task LoadEatAsync()
     {
-        var eatRecordShow = new DatabaseContext.EatDBC.EatRecordShow();
+        var eatRecordShow = new DBx.EatDBC.EatRecordShow();
         eatrecord = await eatRecordShow.GetEatAsync();
         if (eatrecord != null)
         {

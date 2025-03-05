@@ -1,17 +1,15 @@
 ﻿using System.Data.SQLite;
-using kajiApp_blazor.Components.DataModels.HomeModel;
 using kajiApp_blazor.Components.DataModels.OptionModel;
 using Microsoft.Data.Sqlite;
 
 
-
-namespace kajiApp_blazor.Components.DatabaseContext.OptionDBC
+namespace kajiApp_blazor.Components.DBx.OptionDBC
 {
-    public class WorkMaster
+    public class NameMaster
     {
         private readonly string _connectionString = "Data Source=database.db";
         //非同期版
-        public async Task<List<WorkMasterList>> GetWorkMasterAsync() // ✅ 非同期メソッド
+        public async Task<List<NameMasterList>> GetNameMasterAsync() // ✅ 非同期メソッド
         {
             //await Task.Delay(1000);
             using var connection = new SqliteConnection(_connectionString);
@@ -19,43 +17,36 @@ namespace kajiApp_blazor.Components.DatabaseContext.OptionDBC
 
             var command = connection.CreateCommand();
             command.CommandText = "SELECT * " +
-                                                    "FROM workList " +
-                                                    "ORDER BY work_id desc";
+                                                    "FROM nameList " +
+                                                    "ORDER BY name_id desc";
 
-            var workmaster = new List<WorkMasterList>();
+            var nameMasterList = new List<NameMasterList>();
             //sqliteのExecuteReaderAsyncは1明細ずつ取得する仕組みらしい
             using var reader = await command.ExecuteReaderAsync(); // ✅ 非同期実行
             //データをある分だけ1明細ずつ取得 
             while (await reader.ReadAsync()) // ✅ 非同期読み取り
             {
-                workmaster.Add(new WorkMasterList
+                nameMasterList.Add(new NameMasterList
                 {
                     Id = reader.GetInt32(0),
-                    WorkName = reader.GetString(1),
-                    WorkNamePoint = reader.GetInt32(2),
-                    CategoryNumber = reader.GetInt32(3),
+                    Name = reader.GetString(1)
                 });
             }
-            return workmaster; // ✅ 戻り値を Task<List<Work>> にする
+            return nameMasterList; // ✅ 戻り値を Task<List<Work>> にする
         }
-        /// <summary>
-        /// 仕事マスタ登録
-        /// </summary>
-        /// <returns></returns>
-        public async Task InsertWorkMasterAsync(WorkMasterList newWork)
+
+        public async Task InsertNameMasterAsync(NameMasterList newName)
         {
             try
             {
                 using var connection = new SqliteConnection(_connectionString);
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO workList (workName, workNamePoint, 家事分類区分番号) " +
-                                                        "VALUES (@WorkName,@WorkNamePoint, @CategoryNumber) ";
+                command.CommandText = "INSERT INTO nameList (name) " +
+                                                        "VALUES (@Name) ";
 
-                command.Parameters.AddWithValue("@WorkName", newWork.WorkName);
-                command.Parameters.AddWithValue("@WorkNamePoint", newWork.WorkNamePoint);
-                command.Parameters.AddWithValue("@CategoryNumber", newWork.CategoryNumber);
-            
+                command.Parameters.AddWithValue("@Name", newName.Name);
+
 
                 await command.ExecuteNonQueryAsync();
 
@@ -72,7 +63,5 @@ namespace kajiApp_blazor.Components.DatabaseContext.OptionDBC
                 Console.WriteLine($"スタックトレース: {ex.StackTrace}");
             }
         }
-
-
     }
 }
