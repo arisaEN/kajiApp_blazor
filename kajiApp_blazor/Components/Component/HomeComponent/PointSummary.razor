@@ -1,5 +1,5 @@
 ﻿@inject IJSRuntime JS
-@using kajiApp_blazor.Components.Models.HomeModel
+@using kajiApp_blazor.Components.DataModels.HomeModel
 @using kajiApp_blazor.Components.DatabaseContext
 @implements IDisposable
 
@@ -54,7 +54,7 @@
 </div>
 @code {
    
-    [Parameter] public List<Models.HomeModel.PointSummary>? pointsummary { get; set; }
+    [Parameter] public List<DataModels.HomeModel.PointSummary>? pointsummary { get; set; }
 
     [Parameter]
     public DateTime CurrentDateTime { get; set; } = DateTime.Now;

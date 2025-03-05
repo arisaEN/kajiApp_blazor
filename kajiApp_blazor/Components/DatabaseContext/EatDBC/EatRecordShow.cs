@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using kajiApp_blazor.Components.Models.EatModel;
+using kajiApp_blazor.Components.DataModels.EatModel;
 using Microsoft.Data.Sqlite;
 
 namespace kajiApp_blazor.Components.DatabaseContext.EatDBC

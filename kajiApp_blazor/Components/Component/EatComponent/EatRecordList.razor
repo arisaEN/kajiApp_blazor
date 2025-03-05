@@ -1,4 +1,4 @@
-﻿@using kajiApp_blazor.Components.Models.EatModel
+﻿@using kajiApp_blazor.Components.DataModels.EatModel
 @using kajiApp_blazor.Components.DatabaseContext.EatDBC
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @implements IDisposable
@@ -97,7 +97,7 @@ else
 
 @code {
 
-    [Parameter] public List<Models.EatModel.EatRecord>? eatrecord { get; set; }
+    [Parameter] public List<DataModels.EatModel.EatRecord>? eatrecord { get; set; }
     [Inject] private HttpClient Http { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;
 

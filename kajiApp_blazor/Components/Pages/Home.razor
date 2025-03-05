@@ -1,6 +1,6 @@
 ﻿@page "/"
 @using kajiApp_blazor.Components.Component.HomeComponent
-@using kajiApp_blazor.Components.Models.HomeModel
+@using kajiApp_blazor.Components.DataModels.HomeModel
 @using kajiApp_blazor.Components.DatabaseContext
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @using kajiApp_blazor.Components
@@ -36,8 +36,8 @@
 
 @code {
     //フィールド初期化
-    private List<Models.HomeModel.WorkList>? worklist = null;
-    private List<Models.HomeModel.PointSummary>? pointsummary = null;
+    private List<DataModels.HomeModel.WorkList>? worklist = null;
+    private List<DataModels.HomeModel.PointSummary>? pointsummary = null;
     //インスタンス生成で入力フォームに使うNameListとWorkList作成
     private TodayWorkRegistration todayworkregistration = new TodayWorkRegistration();
 

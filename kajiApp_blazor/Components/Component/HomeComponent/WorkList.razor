@@ -49,7 +49,7 @@
 
 @code {
     //リストWorksに反応があるとUIに更新がかかる。
-    [Parameter] public List<Models.HomeModel.WorkList>? worklist { get; set; }
+    [Parameter] public List<DataModels.HomeModel.WorkList>? worklist { get; set; }
 
     [Inject] private HttpClient Http { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;

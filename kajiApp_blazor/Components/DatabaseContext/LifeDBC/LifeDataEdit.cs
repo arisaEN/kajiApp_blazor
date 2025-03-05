@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
-using kajiApp_blazor.Components.Models.LifeModel;
+using kajiApp_blazor.Components.DataModels.LifeModel;
 using Microsoft.Data.Sqlite;
 using kajiApp_blazor.Components.DatabaseContext.LifeDBC;
 
@@ -14,7 +14,7 @@ namespace kajiApp_blazor.Components.DatabaseContext.LifeDBC
         /// life明細更新
         /// </summary>
         /// <param name="record"></param>
-        public async Task UpdateEatDetailAsync(Models.LifeModel.LifeRecord record)
+        public async Task UpdateEatDetailAsync(DataModels.LifeModel.LifeRecord record)
         {
             try
             {

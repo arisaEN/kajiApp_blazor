@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace kajiApp_blazor.Components.Models.HomeModel
+namespace kajiApp_blazor.Components.DataModels.HomeModel
 
 {
     public class TodayWork

@@ -1,6 +1,6 @@
 ﻿using System.Data.SQLite;
-using kajiApp_blazor.Components.Models.HomeModel;
-using kajiApp_blazor.Components.Models.OptionModel;
+using kajiApp_blazor.Components.DataModels.HomeModel;
+using kajiApp_blazor.Components.DataModels.OptionModel;
 using Microsoft.Data.Sqlite;
 
 

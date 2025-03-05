@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using kajiApp_blazor.Components.Models.EatModel;
-using kajiApp_blazor.Components.Models.LifeModel;
+using kajiApp_blazor.Components.DataModels.EatModel;
+using kajiApp_blazor.Components.DataModels.LifeModel;
 using Microsoft.Data.Sqlite;
 
 namespace kajiApp_blazor.Components.DatabaseContext.LifeDBC

@@ -1,8 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using kajiApp_blazor.Components.Models.HomeModel;
+using kajiApp_blazor.Components.DataModels.HomeModel;
 using Microsoft.Data.Sqlite;
-
+using kajiApp_blazor.Components.DataModels;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace kajiApp_blazor.Components.DatabaseContext

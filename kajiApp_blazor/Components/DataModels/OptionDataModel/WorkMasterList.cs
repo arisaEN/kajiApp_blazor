@@ -1,4 +1,4 @@
-﻿namespace kajiApp_blazor.Components.Models.OptionModel
+﻿namespace kajiApp_blazor.Components.DataModels.OptionModel
 {
     public class WorkMasterList
     {

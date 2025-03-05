@@ -1,6 +1,6 @@
 @page "/eat"
 @using kajiApp_blazor.Components.Component.EatComponent
-@using kajiApp_blazor.Components.Models.EatModel
+@using kajiApp_blazor.Components.DataModels.EatModel
 @using kajiApp_blazor.Components.DatabaseContext.EatDBC
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @using kajiApp_blazor.Components
@@ -15,7 +15,8 @@
     <EatRecordList EatRecord="eatrecord" />
 </div>
 @code {
-    private List<Models.EatModel.EatRecord>? eatrecord = null;
+    private List<DataModels.EatModel.EatRecord>? eatrecord = null;
+
 
     //非同期で実績リスト取得
     protected override async Task OnInitializedAsync()

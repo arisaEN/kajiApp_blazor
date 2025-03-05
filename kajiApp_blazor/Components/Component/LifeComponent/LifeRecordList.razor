@@ -1,4 +1,4 @@
-﻿@using kajiApp_blazor.Components.Models.LifeModel
+﻿@using kajiApp_blazor.Components.DataModels.LifeModel
 @using kajiApp_blazor.Components.DatabaseContext.LifeDBC
 @inject Blazored.Toast.Services.IToastService ToastService
 
@@ -69,15 +69,15 @@
 </div>
 
 @code {
-    [Parameter] public List<Models.LifeModel.LifeRecord>? liferecord { get; set; }
+    [Parameter] public List<DataModels.LifeModel.LifeRecord>? liferecord { get; set; }
     [Inject] private HttpClient Http { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;
 
     private bool isLoading = false;
-    private Models.LifeModel.LifeRecord? editRecord;
+    private DataModels.LifeModel.LifeRecord? editRecord;
     private int editId , editRent, editWater, editElectricity, editGas;
 
-    private void EditRecord(Models.LifeModel.LifeRecord record)
+    private void EditRecord(DataModels.LifeModel.LifeRecord record)
     {
         editRecord = record;
         editId = record.Id;

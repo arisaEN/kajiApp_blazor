@@ -1,4 +1,4 @@
-﻿using kajiApp_blazor.Components.Models.AdminModel;
+﻿using kajiApp_blazor.Components.DataModels.AdminModel;
 using Microsoft.Data.Sqlite;
 
 namespace kajiApp_blazor.Components.DatabaseContext.AdminDBC
