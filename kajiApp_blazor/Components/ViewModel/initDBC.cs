@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SQLite;
 
-namespace kajiApp_blazor.Components.DBx
+namespace kajiApp_blazor.Components.ViewModel
 {
     /// <summary>
     /// DBの初期化処理

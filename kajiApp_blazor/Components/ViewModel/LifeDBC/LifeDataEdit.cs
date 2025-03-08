@@ -3,9 +3,9 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using kajiApp_blazor.Components.DataModels.LifeModel;
 using Microsoft.Data.Sqlite;
-using kajiApp_blazor.Components.DBx.LifeDBC;
+using kajiApp_blazor.Components.ViewModel.LifeDBC;
 
-namespace kajiApp_blazor.Components.DBx.LifeDBC
+namespace kajiApp_blazor.Components.ViewModel.LifeDBC
 {
     public class LifeDataEdit
     {

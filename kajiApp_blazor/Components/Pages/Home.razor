@@ -1,14 +1,14 @@
 ﻿@page "/"
 @using kajiApp_blazor.Components.Component.HomeComponent
 @using kajiApp_blazor.Components.DataModels.HomeModel
-@using kajiApp_blazor.Components.DBx
+@using kajiApp_blazor.Components.ViewModel
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @using kajiApp_blazor.Components
 @using kajiApp_blazor.Components.Models;
 @inject NavigationManager Navigation
 @inject HttpClient Http
 @inject IConfiguration Configuration
-@inject DatabaseContext DbContext
+@inject kajiappDBContext DbContext
 
 <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
 <div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">

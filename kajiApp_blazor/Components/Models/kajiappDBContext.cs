@@ -4,17 +4,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace kajiApp_blazor.Components.Models;
 
-public partial class DatabaseContext : DbContext
+public partial class kajiappDBContext : DbContext
 {
-    public DatabaseContext()
+    public kajiappDBContext()
     {
     }
 
 
-    public DatabaseContext(DbContextOptions<DatabaseContext> options)
+    public kajiappDBContext(DbContextOptions<kajiappDBContext> options)
         : base(options)
     {
     }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured) // すでに設定されていない場合のみ設定
+        {
+            optionsBuilder.UseSqlite("Data Source=database.db");
+        }
+    }
+
 
     public virtual DbSet<Eat> Eats { get; set; }
 
@@ -36,9 +44,9 @@ public partial class DatabaseContext : DbContext
 
     public virtual DbSet<家事分類区分> 家事分類区分s { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlite("Data Source=database.db");
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlite("Data Source=database.db");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

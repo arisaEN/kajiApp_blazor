@@ -8,15 +8,15 @@ using kajiApp_blazor.Components.Models;
 
 
 
-namespace kajiApp_blazor.Components.DBx
+namespace kajiApp_blazor.Components.ViewModel
 {
     public class HomeDatabaseContext
     {
         private readonly string _connectionString = "Data Source=database.db";
 
-        private readonly DatabaseContext _context;
+        private readonly kajiappDBContext _context;
 
-        public HomeDatabaseContext(DatabaseContext context)
+        public HomeDatabaseContext(kajiappDBContext context)
         {
             _context = context;
         }
@@ -27,7 +27,8 @@ namespace kajiApp_blazor.Components.DBx
             var today = DateOnly.FromDateTime(DateTime.Today);
             var fromDate = today.AddDays(-5);
 
-            // まずデータベースからリストを取得（この時点では SQL クエリの範囲）
+            // まずデータベースからリストを取得（この時点では SQL クエ
+            // リの範囲）
             var worklist = await _context.Works
                 .Where(w => w.Day >= fromDate && w.Day <= today)
                 .OrderByDescending(w => w.Id)

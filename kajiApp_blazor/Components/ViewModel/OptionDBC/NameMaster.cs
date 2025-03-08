@@ -3,7 +3,7 @@ using kajiApp_blazor.Components.DataModels.OptionModel;
 using Microsoft.Data.Sqlite;
 
 
-namespace kajiApp_blazor.Components.DBx.OptionDBC
+namespace kajiApp_blazor.Components.ViewModel.OptionDBC
 {
     public class NameMaster
     {

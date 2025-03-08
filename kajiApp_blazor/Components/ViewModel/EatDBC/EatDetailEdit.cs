@@ -4,7 +4,7 @@ using System.Diagnostics;
 using kajiApp_blazor.Components.DataModels.EatModel;
 using Microsoft.Data.Sqlite;
 
-namespace kajiApp_blazor.Components.DBx.EatDBC
+namespace kajiApp_blazor.Components.ViewModel.EatDBC
 {
     public class EatDetailEdit
     {

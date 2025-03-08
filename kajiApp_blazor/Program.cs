@@ -1,7 +1,7 @@
 using Blazored.Toast;
 using kajiApp_blazor.Components;
-using kajiApp_blazor.Components.DBx;
-using kajiApp_blazor.Components.DBx.HomeDBC;
+using kajiApp_blazor.Components.ViewModel;
+using kajiApp_blazor.Components.ViewModel.HomeDBC;
 using kajiApp_blazor.Components.Models;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +13,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddBlazoredToast();
 builder.Services.AddMudServices();
-builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlite("Data Source=database.db"));
+
+builder.Services.AddDbContext<kajiappDBContext>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
