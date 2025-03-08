@@ -1,0 +1,59 @@
+﻿@page "/option"
+@using kajiApp_blazor.Components.DTO.OptionModel
+@using kajiApp_blazor.Components.ViewModel.OptionDBC
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IConfiguration Configuration
+@implements IDisposable
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
+@inject AppState AppState
+@using kajiApp_blazor.Components.View.Component.OptionComponent
+
+<PageTitle>設定</PageTitle>
+<BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
+<div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
+    
+     <h1 class="fas fa-cog text-center py-1">設定</h1>
+
+    <h2 class="mt-2">家事名リスト管理</h2>
+    <WorkMasterComponent WorkMaster="workmaster" />
+
+    <h2 class="mt-2">名前リスト管理</h2>
+    <NameMasterComponent NameMaster="namemaster" />
+</div>
+@code {
+    private List<WorkMasterList> workmaster = new();
+    private List<NameMasterList> namemaster = new();
+
+    private void OnChangeHandler() => _ = ReloadData();
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += OnChangeHandler;
+        _ = ReloadData();
+    }
+
+
+    /// <summary>
+    /// データを呼び出して、子コンポーネントに渡す
+    /// </summary>
+    /// <returns></returns>
+    private async Task ReloadData()
+    {
+        try
+        {
+            workmaster = await new WorkMaster().GetWorkMasterAsync();
+            namemaster = await new NameMaster().GetNameMasterAsync();
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"データ取得エラー: {ex.Message}");
+        }
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= OnChangeHandler;
+    }
+}

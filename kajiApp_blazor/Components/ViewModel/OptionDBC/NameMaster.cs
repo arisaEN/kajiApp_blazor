@@ -1,5 +1,5 @@
 ﻿using System.Data.SQLite;
-using kajiApp_blazor.Components.DataModels.OptionModel;
+using kajiApp_blazor.Components.DTO.OptionModel;
 using Microsoft.Data.Sqlite;
 
 

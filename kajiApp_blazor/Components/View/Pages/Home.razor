@@ -1,0 +1,84 @@
+﻿@page "/"
+@using kajiApp_blazor.Components.View.Component.HomeComponent
+@using kajiApp_blazor.Components.DTO.HomeModel
+@using kajiApp_blazor.Components.ViewModel
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
+@using kajiApp_blazor.Components
+@using kajiApp_blazor.Components.Entity;
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IConfiguration Configuration
+@inject kajiappDBContext DbContext
+
+<BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
+<div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
+    <h1 class="text-center py-1">
+        <i class="fas fa-house me-2"></i> 実績入力フォーム
+    </h1>
+    <div class="px-0">
+        <WorkForm TodayWorkRegistration="todayworkregistration" />
+    </div>
+
+    <div class="text-center py-1 mt-1border-bottom border-secondary">
+        <h3 class="mb-0 pb-0">実績一覧</h3>
+    </div>
+
+    <div class="px-0">
+        <WorkList WorkList="worklist" />
+    </div>
+
+    <div class="text-center py-1 mt-1 border-bottom border-secondary">
+        <h3 class="mb-0 pb-0">ポイント割合</h3>
+    </div>
+
+    <div class="px-0">
+        <PointSummary PointSummary="pointsummary" />
+    </div>
+</div>
+
+@code {
+    //フィールド初期化
+    private List<DTO.HomeModel.WorkList>? worklist = null;
+    private List<DTO.HomeModel.PointSummary>? pointsummary = null;
+    //インスタンス生成で入力フォームに使うNameListとWorkList作成
+    private TodayWorkRegistration todayworkregistration = new TodayWorkRegistration();
+
+    //非同期で実績リスト取得
+    protected override async Task OnInitializedAsync()
+    {
+        //家事実績リストをDBから持ってくる。入力フォームさえできてればOKなので非同期で取得する
+        _ = LoadWorksAsync();
+        _ = PointSummaryAsync();
+
+    }
+    /// <summary>
+    ///家事実績リスト取得非同期
+    /// </summary>
+    /// <returns></returns>
+    private async Task LoadWorksAsync()
+    {
+        var _homeDatabaseContext = new HomeDatabaseContext(DbContext);
+        worklist = await _homeDatabaseContext.GetWorksAsync();
+        if (worklist != null)
+        {
+            //worklistに値が入ったらUI更新
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    /// <summary>
+    /// 家事合計ポイント取得非同期
+    /// </summary>
+    /// <returns></returns>
+    private async Task PointSummaryAsync()
+    {
+        var _homeDatabaseContext = new HomeDatabaseContext(DbContext);
+        pointsummary = await _homeDatabaseContext.GetPointSumListAsync();
+        if (pointsummary != null)
+        {
+            //pointに値が入ったらUI更新
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+
+}

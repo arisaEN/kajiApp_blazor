@@ -1,4 +1,4 @@
-﻿using kajiApp_blazor.Components.DataModels.HomeModel;
+﻿using kajiApp_blazor.Components.DTO.HomeModel;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Data.Sqlite;
 using System;

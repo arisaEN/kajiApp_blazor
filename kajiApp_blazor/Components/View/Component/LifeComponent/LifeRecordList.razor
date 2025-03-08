@@ -1,0 +1,129 @@
+﻿@using kajiApp_blazor.Components.DTO.LifeModel
+@using kajiApp_blazor.Components.ViewModel.LifeDBC
+@inject Blazored.Toast.Services.IToastService ToastService
+
+<div class="card bg-dark text-white shadow-lg rounded">
+
+        @if (isLoading)
+        {
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (liferecord == null || !liferecord.Any())
+        {
+            <p class="text-center text-white">記録がありません</p>
+        }
+        else
+        {
+        <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
+            <table class="table table-bordered table-striped eat-table text-white bg-dark">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th class="text-white">年</th>
+                        <th class="text-white">月</th>
+                        <th class="text-white">家賃</th>
+                        <th class="text-white">水道代</th>
+                        <th class="text-white">電気代</th>
+                        <th class="text-white">ガス代</th>
+                        <th class="text-white">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var l in liferecord)
+                    {
+                        <tr class="text-center text-white">
+                            <td>@l.Year</td>
+                            <td>@l.Month</td>
+                            @if (editRecord == l)
+                            {
+                                <td><input type="number" class="form-control" @bind="editRent" /></td>
+                                <td><input type="number" class="form-control" @bind="editWater" /></td>
+                                <td><input type="number" class="form-control" @bind="editElectricity" /></td>
+                                <td><input type="number" class="form-control" @bind="editGas" /></td>
+                                <td>
+                                    <button class="btn btn-success" @onclick="UpdateRecord">更新</button>
+                                    <button class="btn btn-secondary" @onclick="CancelEdit">❌️</button>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>@l.Rent</td>
+                                <td>@l.Water</td>
+                                <td>@l.Electricity</td>
+                                <td>@l.Gas</td>
+                                <td>
+                                    <button class="btn btn-primary" @onclick="() => EditRecord(l)">編集</button>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        }
+
+</div>
+
+@code {
+    [Parameter] public List<DTO.LifeModel.LifeRecord>? liferecord { get; set; }
+    [Inject] private HttpClient Http { get; set; } = default!;
+    [Inject] private AppState AppState { get; set; } = default!;
+
+    private bool isLoading = false;
+    private DTO.LifeModel.LifeRecord? editRecord;
+    private int editId , editRent, editWater, editElectricity, editGas;
+
+    private void EditRecord(DTO.LifeModel.LifeRecord record)
+    {
+        editRecord = record;
+        editId = record.Id;
+        editRent = record.Rent;
+        editWater = record.Water;
+        editElectricity = record.Electricity;
+        editGas = record.Gas;
+    }
+
+    private void CancelEdit()
+    {
+        ToastService.ShowInfo("更新がキャンセルされました。");
+        editRecord = null;
+    }
+
+    private async Task UpdateRecord()
+    {
+        try
+        {
+            if (editRecord != null)
+            {
+                // ユーザーが入力した値を editRecord に反映
+                editRecord.Id = editId;
+                editRecord.Rent = editRent;
+                editRecord.Water = editWater;
+                editRecord.Electricity = editElectricity;
+                editRecord.Gas = editGas;
+
+                var lifeDataEdit = new LifeDataEdit();
+                await lifeDataEdit.UpdateEatDetailAsync(editRecord); // 更新処理
+
+                // 編集モードを終了
+                editRecord = null;
+
+                // 成功時のトースト通知
+                ToastService.ShowSuccess("更新が完了しました");
+
+                // データの再取得（必要なら）
+                // await ReloadData();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"データ更新中にエラーが発生しました: {ex.Message}");
+            // エラー時のトースト通知
+            ToastService.ShowError($"データ更新に失敗しました: {ex.Message}");
+        }
+    }
+}

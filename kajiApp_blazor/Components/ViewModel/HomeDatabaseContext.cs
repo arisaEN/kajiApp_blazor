@@ -1,10 +1,10 @@
 ﻿using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using kajiApp_blazor.Components.DataModels.HomeModel;
+using kajiApp_blazor.Components.DTO.HomeModel;
 using Microsoft.Data.Sqlite;
-using kajiApp_blazor.Components.DataModels;
+using kajiApp_blazor.Components.DTO;
 using Microsoft.EntityFrameworkCore;
-using kajiApp_blazor.Components.Models;
+using kajiApp_blazor.Components.Entity;
 
 
 
@@ -22,7 +22,7 @@ namespace kajiApp_blazor.Components.ViewModel
         }
 
 
-        public async Task<List<DataModels.HomeModel.WorkList>> GetWorksAsync()
+        public async Task<List<DTO.HomeModel.WorkList>> GetWorksAsync()
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
             var fromDate = today.AddDays(-5);
@@ -36,7 +36,7 @@ namespace kajiApp_blazor.Components.ViewModel
                 .ToListAsync(); // ← ここでメモリに読み込む
 
             // メモリ上で変換処理を行う（式ツリーの制約を回避）
-            var result = worklist.Select(w => new DataModels.HomeModel.WorkList
+            var result = worklist.Select(w => new DTO.HomeModel.WorkList
             {
                 Id = w.Id,
                 Day = w.Day.HasValue ? w.Day.Value.ToDateTime(TimeOnly.MinValue) : DateTime.MinValue,

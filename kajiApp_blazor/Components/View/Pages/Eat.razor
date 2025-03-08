@@ -1,0 +1,41 @@
+@page "/eat"
+@using kajiApp_blazor.Components.View.Component.EatComponent
+@using kajiApp_blazor.Components.DTO.EatModel
+@using kajiApp_blazor.Components.ViewModel.EatDBC
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
+@using kajiApp_blazor.Components
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IConfiguration Configuration
+<BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
+<div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
+    <h1 class="text-center py-1">
+        <i class="fas fa-utensils"></i> 食費記録一覧
+    </h1>
+    <EatRecordList EatRecord="eatrecord" />
+</div>
+@code {
+    private List<DTO.EatModel.EatRecord>? eatrecord = null;
+
+
+    //非同期で実績リスト取得
+    protected override async Task OnInitializedAsync()
+    {
+        //家事実績リストをDBから持ってくる。入力フォームさえできてればOKなので非同期で取得する
+        _ = LoadEatAsync();
+    }
+    /// <summary>
+    ///Eatリスト取得非同期
+    /// </summary>
+    /// <returns></returns>
+    private async Task LoadEatAsync()
+    {
+        var eatRecordShow = new ViewModel.EatDBC.EatRecordShow();
+        eatrecord = await eatRecordShow.GetEatAsync();
+        if (eatrecord != null)
+        {
+            //eatに値が入ったらUI更新
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}

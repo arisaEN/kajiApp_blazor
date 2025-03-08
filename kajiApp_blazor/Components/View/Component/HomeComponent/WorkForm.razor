@@ -1,0 +1,142 @@
+﻿
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
+@using kajiApp_blazor.Components.DTO.HomeModel
+@using kajiApp_blazor.Components.ViewModel.HomeDBC
+@using Microsoft.AspNetCore.Components.Forms
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
+@inject IToastService ToastService
+
+
+
+<div class="card bg-dark text-white shadow-lg rounded">
+    <div class="card-body">
+
+        <EditForm Model="FormModel" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <input type="hidden" @bind="FormModel.WorkId" />
+            <input type="hidden" @bind="FormModel.WorkName" />
+
+            <!-- 日付入力 -->
+            <div class="mb-3">
+                <label for="dateInput" class="form-label">日付</label>
+                <InputDate id="dateInput" class="form-control" @bind-Value="FormModel.Day" />
+                <ValidationMessage For="@(() => FormModel.Day)" class="fade-warning" />
+            </div>
+
+            <!-- 名前選択 -->
+            <div class="mb-3">
+                <label for="name" class="form-label">名前</label>
+                <InputSelect id="name" class="form-select" @bind-Value="FormModel.Name">
+                    @foreach (var name in todayWorkRegistration.NameList)
+                    {
+                        <option value="@name">@name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => FormModel.Name)" class="fade-warning" />
+            </div>
+
+            <!-- 家事名選択 -->
+            <div class="mb-3">
+                <label for="workSelect" class="form-label">家事名</label>
+                <InputSelect id="workSelect" class="form-select" @bind-Value="FormModel.WorkId" @onchange="todayWorkRegistration.UpdateWorkName">
+                    @foreach (var work in todayWorkRegistration.WorkList)
+                    {
+                        <option value="@work.Id">@work.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => FormModel.WorkId)" class="fade-warning" />
+            </div>
+
+            <!-- 割合選択 -->
+            <div class="mb-3">
+                <label class="form-label">何割?</label>
+                <div>
+                    <InputRadioGroup @bind-Value="FormModel.Percent">
+                        <InputRadio id="percent50" class="form-check-input" Value="50" /><label for="percent50">50%</label>
+                        <InputRadio id="percent100" class="form-check-input" Value="100" /><label for="percent100">100%</label>
+                    </InputRadioGroup>
+                    <ValidationMessage For="@(() => FormModel.Percent)" class="fade-warning" />
+                </div>
+            </div>
+
+            <!-- 登録ボタン -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn w-100" disabled="@isLoading">
+                    @(isLoading ? "登録中..." : "登録")
+                </button>
+            </div>
+
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    //フォーム初期化
+    private bool isLoading = false; // ローディング状態を管理
+    [Parameter] public TodayWorkRegistration todayWorkRegistration { get; set; } = default!;
+    [Inject] private AppState AppState { get; set; } = default!;
+
+    // private TodayWork FormModel => todayWorkRegistration.FormModel;
+
+    private TodayWork FormModel
+    {
+        get { return todayWorkRegistration.FormModel; }
+    }
+
+
+    //登録ボタン
+    private async Task HandleSubmit()
+    {
+        if (string.IsNullOrWhiteSpace(FormModel.Name) ||
+            FormModel.Day == default ||
+            FormModel.WorkId == default ||
+            FormModel.Percent == default)
+        {
+            ToastService.ShowWarning("すべての項目を入力してください。");
+            return;
+        }
+
+        try
+        {
+            isLoading = true; // ローディング開始
+
+            // WorkIdからWorkNameを取得
+            var selectedWork = todayWorkRegistration.WorkList
+                                .FirstOrDefault(w => w.Id == FormModel.WorkId);
+            if (selectedWork != null)
+            {
+                FormModel.WorkName = selectedWork.Name;
+            }
+            else
+            {
+                ToastService.ShowWarning("家事名が未選択です。");
+                Console.WriteLine($"WorkId {FormModel.WorkId} に対応する WorkName が見つかりません");
+                return;
+            }
+
+            // データベースに登録
+            await todayWorkRegistration.SaveToDatabaseAsync();
+            ToastService.ShowSuccess("家事記録成功しました！");
+            Console.WriteLine("データを登録しました");
+            FormModel.WorkName = ""; // 家事名をリセット
+            FormModel.WorkId = default; // 家事IDもリセット
+            // FormModel.Percent = default; 割合もリセット
+            
+
+            // 状態変更を通知
+            AppState.NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError("家事記録失敗しました。");
+            Console.WriteLine($"データ登録中にエラーが発生しました: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false; // ローディング終了
+            await InvokeAsync(StateHasChanged); // UI更新
+        }
+    }
+}
