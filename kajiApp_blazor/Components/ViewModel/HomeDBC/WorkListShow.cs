@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using kajiApp_blazor.Components.Entity;
 
 
-namespace kajiApp_blazor.Components.DatabaseContext.HomeDBC
+namespace kajiApp_blazor.Components.ViewModel.HomeDBC
 
 {
     public class WorkListShow

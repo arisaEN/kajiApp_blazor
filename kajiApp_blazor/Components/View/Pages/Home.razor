@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using kajiApp_blazor.Components.DatabaseContext.HomeDBC
+@using kajiApp_blazor.Components.ViewModel.HomeDBC
 @using kajiApp_blazor.Components.View.Component.HomeComponent
 @using kajiApp_blazor.Components.DTO.HomeModel
 @using kajiApp_blazor.Components.ViewModel
@@ -42,11 +42,12 @@
     private List<DTO.HomeModel.WorkList>? worklist = null;
     private List<DTO.HomeModel.PointSummary>? pointsummary = null;
     //インスタンス生成で入力フォームに使うNameListとWorkList作成
-    private TodayWorkRegistration todayworkregistration = new TodayWorkRegistration();
+    private TodayWorkRegistration todayworkregistration;
 
     //非同期で実績リスト取得
     protected override async Task OnInitializedAsync()
     {
+        todayworkregistration = new TodayWorkRegistration(DbContext);
         //家事実績リストをDBから持ってくる。入力フォームさえできてればOKなので非同期で取得する
         _ = LoadWorksAsync();
         _ = PointSummaryAsync();

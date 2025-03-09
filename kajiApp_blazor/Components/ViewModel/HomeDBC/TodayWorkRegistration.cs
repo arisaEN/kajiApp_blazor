@@ -7,6 +7,8 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using kajiApp_blazor.Components.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace kajiApp_blazor.Components.ViewModel.HomeDBC
 {
@@ -18,6 +20,7 @@ namespace kajiApp_blazor.Components.ViewModel.HomeDBC
     public class TodayWorkRegistration
     {
         private readonly string _connectionString = "Data Source=database.db";
+        private readonly kajiappDBContext _context;
 
         public TodayWork FormModel { get; private set; } = new TodayWork();
 
@@ -30,8 +33,9 @@ namespace kajiApp_blazor.Components.ViewModel.HomeDBC
         /// <summary>
         /// コンストラクタでDBからリストに値を入れて親に返す
         /// </summary>
-        public TodayWorkRegistration()
+        public TodayWorkRegistration(kajiappDBContext context)
         {
+            _context = context;
             LoadDataFromDatabase();
         }
 
@@ -40,30 +44,54 @@ namespace kajiApp_blazor.Components.ViewModel.HomeDBC
         /// </summary>
         private void LoadDataFromDatabase()
         {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-
-                // NameListの取得
-                using (var command = new SQLiteCommand("SELECT name FROM nameList", connection))
-                using (var reader = command.ExecuteReader())
+            //名前リスト
+            // ① Entity を取得
+            var nameLists =  _context.NameLists
+                .Select(n => new
                 {
-                    while (reader.Read())
-                    {
-                        NameList.Add(reader.GetString(0));
-                    }
-                }
+                    n.NameId,
+                    n.Name 
+                })
+                .ToList();
+            // ② NameList に追加
+            NameList.AddRange(nameLists.Select(n => n.Name));
 
-                // WorkListの取得
-                using (var command = new SQLiteCommand("SELECT work_id, workName FROM workList", connection))
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        WorkList.Add(new WorkItem(reader.GetInt32(0), reader.GetString(1)));
-                    }
-                }
-            }
+           // //家事リスト
+           // // ① Entity を取得
+           // var workLists = _context.WorkLists
+           //     .Select(w => new
+           //     {
+           //         w.WorkId,
+           //         w.WorkName
+           //     })
+           //     .ToList();
+           // // ② NameList に追加
+           //WorkList.AddRange(workLists.Select(w => w.WorkName));
+
+            //using (var connection = new SQLiteConnection(_connectionString))
+            //{
+            //    connection.Open();
+
+            //    // NameListの取得
+            //    using (var command = new SQLiteCommand("SELECT name FROM nameList", connection))
+            //    using (var reader = command.ExecuteReader())
+            //    {
+            //        while (reader.Read())
+            //        {
+            //            NameList.Add(reader.GetString(0));
+            //        }
+            //    }
+
+            // WorkListの取得
+            //using (var command = new SQLiteCommand("SELECT work_id, workName FROM workList", connection))
+            //using (var reader = command.ExecuteReader())
+            //{
+            //    while (reader.Read())
+            //    {
+            //        WorkList.Add(new WorkItem(reader.GetInt32(0), reader.GetString(1)));
+            //    }
+            //}
+            //}
         }
 
 
