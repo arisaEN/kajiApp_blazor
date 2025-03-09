@@ -1,5 +1,6 @@
 ﻿@inject IJSRuntime JS
 @using kajiApp_blazor.Components.DTO.HomeModel
+@using kajiApp_blazor.Components.DatabaseContext.HomeDBC
 @using kajiApp_blazor.Components.ViewModel
 @implements IDisposable
 @using kajiApp_blazor.Components.Entity;
@@ -83,8 +84,8 @@
             isLoading = true; // ローディング開始
             await InvokeAsync(StateHasChanged); // UI更新
             //DBCからインスタンス取得、
-            var _homeDatabaseContext = new HomeDatabaseContext(DbContext);
-            pointsummary = await _homeDatabaseContext.GetPointSumListAsync();
+            var pointSummaryShow = new PointSummaryShow();
+            pointsummary = await pointSummaryShow.GetPointSumListAsync();
         }
         catch (Exception ex)
         {

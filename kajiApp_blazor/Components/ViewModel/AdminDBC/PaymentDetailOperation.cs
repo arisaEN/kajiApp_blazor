@@ -1,5 +1,10 @@
 ﻿using kajiApp_blazor.Components.DTO.AdminModel;
 using Microsoft.Data.Sqlite;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using kajiApp_blazor.Components.Entity;
 
 namespace kajiApp_blazor.Components.ViewModel.AdminDBC
 {

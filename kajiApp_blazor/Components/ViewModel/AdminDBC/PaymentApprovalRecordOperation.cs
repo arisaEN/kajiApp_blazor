@@ -3,53 +3,62 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using kajiApp_blazor.Components.Entity;
+
 
 namespace kajiApp_blazor.Components.ViewModel.AdminDBC
 {
     public class PaymentApprovalRecordOperation
     {
-        private readonly string _connectionString = "Data Source=database.db";
+        private readonly kajiappDBContext _context;
+        public PaymentApprovalRecordOperation(kajiappDBContext context)
+        {
+            _context = context;
+        }
 
         public async Task<List<PaymentApprovalRecord>> GetPaymentApprovalRecordAsync()
         {
-            var paymentApprovalRecord = new List<PaymentApprovalRecord>();
-
             try
             {
-                using var connection = new SqliteConnection(_connectionString);
-                await connection.OpenAsync(); // ✅ 非同期でDB接続を開く
+                // ① Entity を取得
+                var payrecord = await _context.Payments
+                    .Join(
+                        _context.NameLists,
+                        payment => payment.NameCode,  // 支払いテーブルの結合キー
+                        nameList => nameList.NameId, // 名前リストの結合キー
+                        (payment, nameList) => new  // 結合結果（Entity のまま）
+                        {
+                            payment.Yyyymm,
+                            nameList.Name,
+                            payment.Pay,
+                            payment.決裁,
+                            payment.Id
+                        }
+                    )
+                    .Where(p => p.決裁 != "済" || string.IsNullOrEmpty(p.決裁)) // 条件フィルタ
+                    .OrderBy(p => p.Yyyymm)
+                    .ToListAsync();
 
-                var command = connection.CreateCommand();
-                command.CommandText = @"
-                    SELECT payment.yyyymm, nameList.name, payment.pay, payment.""決裁"", id
-                    FROM payment
-                    JOIN nameList ON payment.name_code = nameList.name_id
-                    WHERE payment.""決裁"" <> '済' 
-                        OR payment.""決裁"" IS NULL
-                    ORDER BY payment.yyyymm ASC;";
-
-                using var reader = await command.ExecuteReaderAsync(); // ✅ 非同期実行
-                while (await reader.ReadAsync()) // ✅ 非同期で1行ずつ読み取る
+                // ② DTO に変換
+                var paymentApprovalRecord = payrecord.Select(p => new PaymentApprovalRecord
                 {
-                    paymentApprovalRecord.Add(new PaymentApprovalRecord
-                    {
-                        YearMonth = reader.GetString(0),
-                        Payer = reader.GetString(1),
-                        Payment = !reader.IsDBNull(2) ? reader.GetInt32(2) : 0, // ✅ NULLの場合は0を設定
-                        Status = !reader.IsDBNull(3) ? reader.GetString(3) : string.Empty, // ✅ NULLの場合は空文字を設定
-                        Id = reader.GetInt32(4) // ✅ Idを取得
-                    });
-                }
+                    YearMonth = p.Yyyymm,
+                    Payer = p.Name,
+                    Payment = p.Pay ?? 0, // NULL の場合は 0
+                    Status = p.決裁 ?? string.Empty, // NULL の場合は 空文字
+                    Id = p.Id
+                }).ToList();
+
+                return paymentApprovalRecord; // DTO を返す
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"エラー: {ex.Message}");
                 Console.WriteLine($"スタックトレース: {ex.StackTrace}");
+                return new List<PaymentApprovalRecord>(); // エラー時は空リストを返す
             }
-
-            return paymentApprovalRecord; // ✅ エラー時も空リストを返す
         }
-
         /// <summary>
         /// admin支払金額更新
         /// </summary>
@@ -59,25 +68,26 @@ namespace kajiApp_blazor.Components.ViewModel.AdminDBC
         {
             try
             {
-                using var connection = new SqliteConnection(_connectionString);
-                await connection.OpenAsync();
-                var command = connection.CreateCommand();
-                command.CommandText = "UPDATE payment " +
-                                      "SET pay = @Payment, 決裁 = @Status " +
-                                      "WHERE yyyymm = @YearMonth";
-                command.Parameters.AddWithValue("@Payment", Payment);
-                command.Parameters.AddWithValue("@YearMonth", YearMonth);
-                command.Parameters.AddWithValue("@Status", Status);
+                //引数Yyyymmのレコードを取得 レコードは主キーなので1件しか存在しない想定
+                var payment = await _context.Payments
+                                           .FirstOrDefaultAsync(p => p.Yyyymm == YearMonth);
 
-                int rowsAffected = await command.ExecuteNonQueryAsync(); // 更新された行数を取得
-                return rowsAffected > 0; // 1 以上なら成功
+                if (payment == null)
+                {
+                    return false; // 該当レコードなし
+                }
+
+                payment.Pay = Payment;
+                payment.決裁 = Status;
+
+                await _context.SaveChangesAsync(); // 更新をデータベースに適用
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"データ更新中にエラーが発生しました: {ex.Message}");
-                return false; // 失敗
+                return false;
             }
         }
-
     }
 }
