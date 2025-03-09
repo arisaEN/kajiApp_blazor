@@ -8,6 +8,10 @@
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @inject AppState AppState
 @using kajiApp_blazor.Components.View.Component.OptionComponent
+@inject kajiappDBContext DbContext
+@using kajiApp_blazor.Components.Entity;
+
+
 
 <PageTitle>設定</PageTitle>
 <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
@@ -42,8 +46,8 @@
     {
         try
         {
-            workmaster = await new WorkMaster().GetWorkMasterAsync();
-            namemaster = await new NameMaster().GetNameMasterAsync();
+            workmaster = await new WorkMaster(DbContext).GetWorkMasterAsync();
+            namemaster = await new NameMaster(DbContext).GetNameMasterAsync();
             await InvokeAsync(StateHasChanged);
         }
         catch (Exception ex)

@@ -1,67 +1,56 @@
 ﻿using System.Data.SQLite;
 using kajiApp_blazor.Components.DTO.OptionModel;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using kajiApp_blazor.Components.Entity;
+using kajiApp_blazor.Components.DTO.EatModel;
 
 
 namespace kajiApp_blazor.Components.ViewModel.OptionDBC
 {
     public class NameMaster
     {
-        private readonly string _connectionString = "Data Source=database.db";
+        //private readonly string _connectionString = "Data Source=database.db";
+        private readonly kajiappDBContext _context;
+        public NameMaster(kajiappDBContext context)
+        {
+            _context = context;
+        }
         //非同期版
         public async Task<List<NameMasterList>> GetNameMasterAsync() // ✅ 非同期メソッド
         {
-            //await Task.Delay(1000);
-            using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync(); // ✅ OpenAsync() を使う
-
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT * " +
-                                                    "FROM nameList " +
-                                                    "ORDER BY name_id desc";
-
-            var nameMasterList = new List<NameMasterList>();
-            //sqliteのExecuteReaderAsyncは1明細ずつ取得する仕組みらしい
-            using var reader = await command.ExecuteReaderAsync(); // ✅ 非同期実行
-            //データをある分だけ1明細ずつ取得 
-            while (await reader.ReadAsync()) // ✅ 非同期読み取り
-            {
-                nameMasterList.Add(new NameMasterList
+            // ① Entity を取得
+            var nameLists = await _context.NameLists
+                .OrderByDescending(n => n.NameId)
+                .Select(n => new
                 {
-                    Id = reader.GetInt32(0),
-                    Name = reader.GetString(1)
-                });
-            }
-            return nameMasterList; // ✅ 戻り値を Task<List<Work>> にする
+                    n.NameId,
+                    n.Name
+                })
+                .ToListAsync();
+
+            // ② DTO に変換
+            var nameMasterList = nameLists.Select(n => new NameMasterList
+            {
+                Id = n.NameId,
+                Name = n.Name
+            }).ToList();
+
+            return nameMasterList; // DTO を返す
         }
 
         public async Task InsertNameMasterAsync(NameMasterList newName)
         {
-            try
+            //Entityモデルをnew 引数を代入する。
+            var nameList = new NameList
             {
-                using var connection = new SqliteConnection(_connectionString);
-                await connection.OpenAsync();
-                var command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO nameList (name) " +
-                                                        "VALUES (@Name) ";
+                NameId = newName.Id,
+                Name = newName.Name
+            };
+            //レコード追加とDB保存
+            await _context.NameLists.AddAsync(nameList);
+            await _context.SaveChangesAsync();
 
-                command.Parameters.AddWithValue("@Name", newName.Name);
-
-
-                await command.ExecuteNonQueryAsync();
-
-                Console.WriteLine("データを登録しました");
-            }
-            catch (SQLiteException ex)
-            {
-                Console.WriteLine($"SQLite エラー: {ex.Message}");
-                Console.WriteLine($"スタックトレース: {ex.StackTrace}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"予期しないエラー: {ex.Message}");
-                Console.WriteLine($"スタックトレース: {ex.StackTrace}");
-            }
         }
     }
 }

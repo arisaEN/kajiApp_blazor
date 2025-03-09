@@ -1,47 +1,56 @@
 ﻿using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Diagnostics;
+using System.Reflection.PortableExecutable;
 using kajiApp_blazor.Components.DTO.EatModel;
 using kajiApp_blazor.Components.DTO.LifeModel;
+using kajiApp_blazor.Components.Entity;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace kajiApp_blazor.Components.ViewModel.LifeDBC
 {
     public class LifeRecordShow
     {
-        private readonly string _connectionString = "Data Source=database.db";
+        //private readonly string _connectionString = "Data Source=database.db";
+        private readonly kajiappDBContext _context;
+        public LifeRecordShow(kajiappDBContext context)
+        {
+            _context = context;
+        }
         //非同期版
         public async Task<List<LifeRecord>> GetLifeAsync() // ✅ 非同期メソッド
         {
-            //await Task.Delay(1000);
-            using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync(); // ✅ OpenAsync() を使う
-
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT id , year, month, rent, water, electricity, gas " +
-                                                    "FROM life_detail " +
-                                                    "ORDER BY yyyymm desc ";
-
-            var eatrecord = new List<LifeRecord>();
-            //sqliteのExecuteReaderAsyncは1明細ずつ取得する仕組みらしい
-            using var reader = await command.ExecuteReaderAsync(); // ✅ 非同期実行
-            //データをある分だけ1明細ずつ取得 
-            while (await reader.ReadAsync()) // ✅ 非同期読み取り
-            {
-                eatrecord.Add(new LifeRecord
+            // ① Entity を取得
+            var lifeDetails = await _context.LifeDetails
+                .OrderByDescending(e => e.Yyyymm)
+                .Select(l => new
                 {
-                    Id = reader.GetInt32(0),
-                    Year = reader.GetString(1),
-                    Month = reader.GetString(2),
-                    Rent = reader.GetInt32(3),
-                    Water = reader.GetInt32(4),
-                    Electricity = reader.GetInt32(5),
-                    Gas = reader.GetInt32(6)
-                });
-            }
-            return eatrecord; // ✅ 戻り値を Task<List<Work>> にする
-        }
-        
-        
+                    l.Id,
+                    l.Year,
+                    l.Month,
+                    l.Rent,
+                    l.Water,
+                    l.Electricity,
+                    l.Gas
+                })
+                .ToListAsync();
 
+            // ② DTO に変換
+            var lifeRecord = lifeDetails.Select(l => new LifeRecord
+            {
+                Id = l.Id,
+                Year = l.Year,
+                Month = l.Month,
+                Rent = l.Rent ?? 0, // null の場合は 0 に設定
+                Water = l.Water ?? 0, // null の場合は 0 に設定
+                Electricity = l.Electricity ?? 0, // null の場合は 0 に設定
+                Gas = l.Gas ?? 0 // null の場合は 0 に設定
+            }).ToList();
+
+            return lifeRecord; // DTO を返す
+
+        }
     }
 }

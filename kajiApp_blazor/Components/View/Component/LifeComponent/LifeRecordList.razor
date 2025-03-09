@@ -1,6 +1,8 @@
 ﻿@using kajiApp_blazor.Components.DTO.LifeModel
 @using kajiApp_blazor.Components.ViewModel.LifeDBC
 @inject Blazored.Toast.Services.IToastService ToastService
+@inject kajiappDBContext DbContext
+@using kajiApp_blazor.Components.Entity;
 
 <div class="card bg-dark text-white shadow-lg rounded">
 
@@ -106,7 +108,7 @@
                 editRecord.Electricity = editElectricity;
                 editRecord.Gas = editGas;
 
-                var lifeDataEdit = new LifeDataEdit();
+                var lifeDataEdit = new LifeDataEdit(DbContext);
                 await lifeDataEdit.UpdateEatDetailAsync(editRecord); // 更新処理
 
                 // 編集モードを終了
@@ -114,9 +116,6 @@
 
                 // 成功時のトースト通知
                 ToastService.ShowSuccess("更新が完了しました");
-
-                // データの再取得（必要なら）
-                // await ReloadData();
             }
         }
         catch (Exception ex)

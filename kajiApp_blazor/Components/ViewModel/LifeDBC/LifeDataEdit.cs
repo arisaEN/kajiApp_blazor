@@ -4,48 +4,39 @@ using System.Diagnostics;
 using kajiApp_blazor.Components.DTO.LifeModel;
 using Microsoft.Data.Sqlite;
 using kajiApp_blazor.Components.ViewModel.LifeDBC;
+using kajiApp_blazor.Components.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace kajiApp_blazor.Components.ViewModel.LifeDBC
 {
     public class LifeDataEdit
     {
-        private readonly string _connectionString = "Data Source=database.db";
+        //private readonly string _connectionString = "Data Source=database.db";
+        private readonly kajiappDBContext _context;
+        public LifeDataEdit(kajiappDBContext context)
+        {
+            _context = context;
+        }
         /// <summary>
         /// life明細更新
         /// </summary>
         /// <param name="record"></param>
         public async Task UpdateEatDetailAsync(DTO.LifeModel.LifeRecord record)
         {
-            try
+
+            //引数idのレコードを取得 レコードは主キーなので1件しか存在しない想定
+            var lifeDetails = await _context.LifeDetails
+                                       .FirstOrDefaultAsync(l => l.Id == record.Id);
+            if (lifeDetails == null)
             {
-                using var connection = new SqliteConnection(_connectionString);
-                await connection.OpenAsync();
-
-                var command = connection.CreateCommand();
-                command.CommandText = @"
-            UPDATE life_detail 
-            SET rent = @rent, 
-                water = @water, 
-                electricity = @electricity, 
-                gas = @gas 
-            WHERE id = @id";
-
-                command.Parameters.AddWithValue("@id", record.Id);
-                command.Parameters.AddWithValue("@rent", record.Rent);
-                command.Parameters.AddWithValue("@water", record.Water);
-                command.Parameters.AddWithValue("@electricity", record.Electricity);
-                command.Parameters.AddWithValue("@gas", record.Gas);
-
-                int affectedRows = await command.ExecuteNonQueryAsync();
-                if (affectedRows == 0)
-                {
-                    Debug.WriteLine($"更新失敗: ID {record.Id} のレコードが見つかりません");
-                }
+                // 該当レコードなし
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"データ更新エラー: {ex.Message}");
-            }
+            lifeDetails.Rent = record.Rent;
+            lifeDetails.Water = record.Water;
+            lifeDetails.Electricity = record.Electricity;
+            lifeDetails.Gas = record.Gas;
+
+            await _context.SaveChangesAsync(); // 更新をデータベースに適用
         }
     }
     

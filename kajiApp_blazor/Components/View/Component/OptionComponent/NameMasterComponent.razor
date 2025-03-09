@@ -1,6 +1,10 @@
 ﻿@using kajiApp_blazor.Components.DTO.OptionModel
 @using kajiApp_blazor.Components.ViewModel.OptionDBC
 @inject Blazored.Toast.Services.IToastService ToastService
+@inject kajiappDBContext DbContext
+@using kajiApp_blazor.Components.Entity;
+
+
 
 <table class="table table-bordered table-dark">
     <thead class="table-dark">
@@ -51,7 +55,7 @@
             try
             {
                 isLoading = true;
-                await new NameMaster().InsertNameMasterAsync(newName);
+                await new NameMaster(DbContext).InsertNameMasterAsync(newName);
                 Console.WriteLine("データを登録しました");
                 ToastService.ShowSuccess("データを登録しました");
                 newName.Name = "";
