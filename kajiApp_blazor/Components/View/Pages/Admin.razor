@@ -89,7 +89,7 @@ else
 
     private async Task LoadPaymentDetailAsync()
     {
-        var paymentDetailOperation = new PaymentDetailOperation();
+        var paymentDetailOperation = new PaymentDetailOperation(DbContext);
         paymentDetail = await paymentDetailOperation.GetPaymentDetailAsync();
         await InvokeAsync(StateHasChanged);
     }
