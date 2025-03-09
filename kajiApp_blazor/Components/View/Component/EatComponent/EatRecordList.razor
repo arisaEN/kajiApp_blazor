@@ -1,9 +1,12 @@
-﻿@using kajiApp_blazor.Components.DTO.EatModel
+﻿
+@using kajiApp_blazor.Components.DTO.EatModel
 @using kajiApp_blazor.Components.ViewModel.EatDBC
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @implements IDisposable
 @inject Blazored.Toast.Services.IToastService ToastService
 @inject IJSRuntime JS
+@inject kajiappDBContext DbContext
+@using kajiApp_blazor.Components.Entity;
 
 @* //明細入力画面 *@
 @if (isInputVisible)
@@ -97,7 +100,7 @@ else
 
 @code {
 
-    [Parameter] public List<DTO.EatModel.EatRecord>? eatrecord { get; set; }
+    [Parameter] public List<DTO.EatModel.EatRecord>? eatrecord { get; set; } = new();
     [Inject] private HttpClient Http { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;
 
@@ -106,7 +109,7 @@ else
     private bool isEditVisible = false;
     private string? selectedYear;
     private string? selectedMonth;
-    private decimal? newAmount;
+    private int? newAmount;
     private List<EatDetailRecord>? editRecords;
 
     /// <summary>
@@ -126,7 +129,7 @@ else
         {
             isLoading = true; // ローディング開始
             await InvokeAsync(StateHasChanged); // UI更新
-            var eatRecordShow = new EatRecordShow();
+            var eatRecordShow = new EatRecordShow(DbContext);
             eatrecord  = await eatRecordShow.GetEatAsync();
         }
         catch (Exception ex)
@@ -171,7 +174,7 @@ else
         selectedMonth = month;
         isEditVisible = true;
         isInputVisible = false;
-        var eatDetailEdit = new EatDetailEdit();
+        var eatDetailEdit = new EatDetailEdit(DbContext);
         editRecords = await eatDetailEdit.GetEatDetailAsync(selectedYear, selectedMonth);
     }
 
@@ -195,7 +198,7 @@ else
             isLoading = true;
             await InvokeAsync(StateHasChanged);
 
-            var eatDetailEdit = new EatDetailEdit();
+            var eatDetailEdit = new EatDetailEdit(DbContext);
             await eatDetailEdit.InsertEatDetailAsync(selectedYear, selectedMonth, newAmount);
             await eatDetailEdit.EatDetailSumAsync();
             await ReloadData();
@@ -234,7 +237,7 @@ else
                 return;
             }
 
-            var eatDetailEdit = new EatDetailEdit();
+            var eatDetailEdit = new EatDetailEdit(DbContext);
             await eatDetailEdit.UpdateEatDetailAsync(record.Id, record.Amount); // idを使用して更新
             await eatDetailEdit.EatDetailSumAsync();
             await ReloadData();

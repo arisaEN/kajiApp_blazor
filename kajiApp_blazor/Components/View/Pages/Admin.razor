@@ -2,12 +2,14 @@
 @using Microsoft.JSInterop
 @using kajiApp_blazor.Components
 @using kajiApp_blazor.Components.DTO.AdminModel
+@using kajiApp_blazor.Components.Entity
 @using kajiApp_blazor.Components.ViewModel.AdminDBC
 @using kajiApp_blazor.Components.View.Component.AdminComponent
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 @inject Blazored.Toast.Services.IToastService ToastService
+@inject kajiappDBContext DbContext
 
 <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
 <h3 class="fas fa-user-shield text-center py-1">管理者画面</h3>
@@ -80,21 +82,21 @@ else
 
     private async Task LoadPaymentApprovalRecordAsync()
     {
-        var paymentApprovalRecordOperation = new PaymentApprovalRecordOperation();
+        var paymentApprovalRecordOperation = new PaymentApprovalRecordOperation(DbContext);
         paymentApprovalRecord = await paymentApprovalRecordOperation.GetPaymentApprovalRecordAsync();
         await InvokeAsync(StateHasChanged);
     }
 
     private async Task LoadPaymentDetailAsync()
     {
-        var paymentDetailOperation = new PaymentDetailOperation();
+        var paymentDetailOperation = new PaymentDetailOperation(DbContext);
         paymentDetail = await paymentDetailOperation.GetPaymentDetailAsync();
         await InvokeAsync(StateHasChanged);
     }
 
     private async Task UpdateRecord(PaymentApprovalRecord updatedRecord)
     {
-        var operation = new PaymentApprovalRecordOperation();
+        var operation = new PaymentApprovalRecordOperation(DbContext);
         bool isSuccess = await operation.EditPaymentAsync(updatedRecord.YearMonth, updatedRecord.Payment, updatedRecord.Status);
 
         if (isSuccess)

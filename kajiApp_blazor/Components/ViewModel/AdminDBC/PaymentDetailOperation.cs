@@ -1,50 +1,71 @@
 ﻿using kajiApp_blazor.Components.DTO.AdminModel;
 using Microsoft.Data.Sqlite;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using kajiApp_blazor.Components.Entity;
+using kajiApp_blazor.Components.DTO.EatModel;
 
 namespace kajiApp_blazor.Components.ViewModel.AdminDBC
 {
     public class PaymentDetailOperation
     {
-        private readonly string _connectionString = "Data Source=database.db";
+        private readonly kajiappDBContext _context;
+        public PaymentDetailOperation(kajiappDBContext context)
+        {
+                _context = context;
+        }
         public async Task<List<PaymentDetail>> GetPaymentDetailAsync()
         {
-            //await Task.Delay(1000);
-            using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync(); // ✅ OpenAsync() を使う
 
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT *  "+
-                                                    "FROM life_detail_summary " +
-                                                    "JOIN payment ON life_detail_summary.yyyymm = payment.yyyymm " +
-                                                    "WHERE payment.決裁<> '済' " +
-                                                    "OR payment.決裁 is null " +
-                                                    "ORDER BY yyyymm asc; ";
+            var paydetail = await _context.LifeDetailSummaries
+                .Join(
+                    _context.Payments,
+                    payment => payment.Yyyymm,  // 支払いテーブルの結合キー
+                    LifeDetailSummarie => LifeDetailSummarie.Yyyymm, // 名前リストの結合キー
+                    (LifeDetailSummarie, payment) => new  // 結合結果（Entity のまま）
+                    {
+                        LifeDetailSummarie.Yyyymm,
+                        LifeDetailSummarie.食費,
+                        LifeDetailSummarie.家賃,
+                        LifeDetailSummarie.水道代,
+                        LifeDetailSummarie.電気代,
+                        LifeDetailSummarie.ガス代,
+                        LifeDetailSummarie.生活費食費,
+                        LifeDetailSummarie.生活費合計,
+                        LifeDetailSummarie.折半計算,
+                        LifeDetailSummarie.家事割合適用後折半代金,
+                        LifeDetailSummarie.荻田,
+                        payment.Pay,
+                        payment.NameCode,
+                        payment.決裁
+                    }
+                )
+                .Where(p => p.決裁 != "済" ) // 条件フィルタ
+                .OrderBy(p => p.Yyyymm)
+                .ToListAsync();
 
-            var paymentDetail = new List<PaymentDetail>();
-            //sqliteのExecuteReaderAsyncは1明細ずつ取得する仕組みらしい
-            using var reader = await command.ExecuteReaderAsync(); // ✅ 非同期実行
-            //データをある分だけ1明細ずつ取得 
-            while (await reader.ReadAsync()) // ✅ 非同期読み取り
+            // ② DTO に変換
+            var paymentDetail = paydetail.Select(p => new PaymentDetail
             {
-                paymentDetail.Add(new PaymentDetail
-                {
-                    YearMonth = reader.GetString(0),
-                    Food = reader.GetString(1),
-                    Rent = reader.GetString(2),
-                    Water = reader.GetString(3),
-                    Electricity = reader.GetString(4),
-                    Gas = reader.GetString(5),
-                    LifeTotal = reader.GetString(6),
-                    FullTotal = reader.GetString(7),
-                    SharedCost = reader.GetString(8),
-                    AdjustedSharedCost = reader.GetString(9),
-                    Percentage = reader.GetString(10),
-                    Payment = reader.GetString(11),
-                    Payer = reader.GetString(12),
-                    Status = reader.GetString(13)
-                });
-            }
-            return paymentDetail; // ✅ 戻り値を Task<List<Work>> にする
+                YearMonth = p.Yyyymm,
+                Food = p.食費,
+                Rent = p.家賃,
+                Water = p.水道代,
+                Electricity = p.電気代,
+                Gas = p.ガス代,
+                LifeTotal = p.生活費食費,
+                FullTotal = p.生活費合計,
+                SharedCost = p.折半計算,
+                AdjustedSharedCost = p.家事割合適用後折半代金,
+                Percentage = p.荻田,
+                Payment = p.Pay?.ToString() ?? "0",   // `null` の場合は "0" をセット
+                Payer = p.NameCode?.ToString() ?? "N/A", // `null` の場合は "N/A" をセット
+                Status = p.決裁
+            }).ToList();
+
+            return paymentDetail; // DTO を返す
 
         }
     }

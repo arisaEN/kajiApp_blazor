@@ -6,11 +6,11 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app  
 # コンテナ内部でポート 2001 を開放する
-EXPOSE 3001
+EXPOSE 2001
 
 # (2) ASP.NET Core の実行ポートを設定
 # コンテナ内で ASP.NET Core アプリがポート 2001 でリッスンするようにする
-ENV ASPNETCORE_URLS="http://+:3001"
+ENV ASPNETCORE_URLS="http://+:2001"
 
 # (3) ビルド環境のベースイメージを指定
 # .NET SDK を含むイメージを使用し、アプリをビルドする

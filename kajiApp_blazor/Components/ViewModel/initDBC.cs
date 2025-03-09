@@ -4,7 +4,7 @@ using System.Data.SQLite;
 namespace kajiApp_blazor.Components.ViewModel
 {
     /// <summary>
-    /// DBの初期化処理
+    /// DBの初期化処理 月毎にその月のレコードがなければ生成
     /// </summary>
     public class InitDBC
     {

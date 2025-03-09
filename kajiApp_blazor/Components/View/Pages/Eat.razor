@@ -7,6 +7,10 @@
 @inject NavigationManager Navigation
 @inject HttpClient Http
 @inject IConfiguration Configuration
+@inject kajiappDBContext DbContext
+@using kajiApp_blazor.Components.Entity;
+
+
 <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
 <div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
     <h1 class="text-center py-1">
@@ -15,7 +19,7 @@
     <EatRecordList EatRecord="eatrecord" />
 </div>
 @code {
-    private List<DTO.EatModel.EatRecord>? eatrecord = null;
+    private List<DTO.EatModel.EatRecord>? eatrecord = new();
 
 
     //非同期で実績リスト取得
@@ -30,7 +34,7 @@
     /// <returns></returns>
     private async Task LoadEatAsync()
     {
-        var eatRecordShow = new ViewModel.EatDBC.EatRecordShow();
+        var eatRecordShow = new ViewModel.EatDBC.EatRecordShow(DbContext);
         eatrecord = await eatRecordShow.GetEatAsync();
         if (eatrecord != null)
         {
