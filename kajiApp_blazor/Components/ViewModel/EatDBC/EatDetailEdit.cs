@@ -1,58 +1,74 @@
 ﻿using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
+using kajiApp_blazor.Components.DTO.AdminModel;
 using kajiApp_blazor.Components.DTO.EatModel;
+using kajiApp_blazor.Components.Entity;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace kajiApp_blazor.Components.ViewModel.EatDBC
 {
     public class EatDetailEdit
     {
-        private readonly string _connectionString = "Data Source=database.db";
-
+        private readonly kajiappDBContext _context;
+        public EatDetailEdit(kajiappDBContext context)
+        {
+            _context = context;
+        }
         /// <summary>
         /// 明細を保存
         /// </summary>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
-        /// <param name="amount"></param>
-        /// <returns></returns>
-        public async Task InsertEatDetailAsync(string year, string month, decimal? amount)
+        public async Task InsertEatDetailAsync(string year, string month, int? amount)
         {
-            const string query = "INSERT INTO eat_detail (year, month, amount) VALUES (@year, @month, @amount)";
-
-            using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync();
-
-            using var command = connection.CreateCommand();
-            command.CommandText = query;
-            command.Parameters.AddWithValue("@year", year);
-            command.Parameters.AddWithValue("@month", month);
-            command.Parameters.AddWithValue("@amount", amount);
-
-            await command.ExecuteNonQueryAsync();
+            //Entityモデルをnew 引数を代入する。
+            var eatDetail = new EatDetail
+            {
+                Year = year,
+                Month = month,
+                Amount = amount,
+                InputTime = DateTime.UtcNow
+            };
+            //レコード追加とDB保存
+            await _context.EatDetails.AddAsync(eatDetail);
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>
         /// detail明細の合計をeatテーブルに反映
         /// </summary>
-        /// <returns></returns>
+        /// <returns>これ全件更新しているけど、呼び出し元からyyyymmもらって対象の月のみ更新にしたほうがいい</returns>
         public async Task EatDetailSumAsync()
         {
-            const string query = @"UPDATE eat 
-                                  SET amount = (
-                                    SELECT COALESCE(SUM(ed.amount), 0) 
-                                    FROM eat_detail ed 
-                                    WHERE ed.year = eat.year AND ed.month = eat.month
-                                  )";
+            var eatDetailSums = await _context.EatDetails
+                .GroupBy(ed => new { ed.Year, ed.Month })
+                .Select(g => new { g.Key.Year, g.Key.Month, TotalAmount = g.Sum(ed => ed.Amount ?? 0) })
+                .ToListAsync();
+            //Eatレコードを更新
+            foreach (var sum in eatDetailSums)
+            {
+                var eat = await _context.Eats
+                    .FirstOrDefaultAsync(e => e.Year == sum.Year && e.Month == sum.Month);
+                //あれば更新
+                if (eat != null)
+                {
+                    eat.Amount = sum.TotalAmount;
+                }
+                //なければ新規明細作成
+                else
+                {
+                    _context.Eats.Add(new Eat
+                    {
+                        Year = sum.Year,
+                        Month = sum.Month,
+                        Amount = sum.TotalAmount,
+                        CreatedAt = DateTime.UtcNow
+                    });
+                }
+            }
 
-            using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync();
-
-            using var command = connection.CreateCommand();
-            command.CommandText = query;
-
-            await command.ExecuteNonQueryAsync();
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -61,34 +77,28 @@ namespace kajiApp_blazor.Components.ViewModel.EatDBC
         /// <returns></returns>
         public async Task<List<EatDetailRecord>> GetEatDetailAsync(string year, string month)
         {
-            using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync(); // ✅ OpenAsync() を使う
-
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT id, amount, input_time " +
-                                  "FROM eat_detail " +
-                                  "WHERE year = @year AND month = @month "+
-                                  "ORDER BY id desc ";// ✅ パラメータ化クエリ
-
-            command.Parameters.AddWithValue("@year", year);
-            command.Parameters.AddWithValue("@month", month);
-
-            var eatDetailRecord = new List<EatDetailRecord>();
-
-            using var reader = await command.ExecuteReaderAsync(); // ✅ 非同期実行
-            while (await reader.ReadAsync()) // ✅ 非同期読み取り
-            {
-                eatDetailRecord.Add(new EatDetailRecord
+            // ① Entity を取得
+            var eatDetails = await _context.EatDetails
+                .Where(ed => ed.Year == year && ed.Month == month)
+                .OrderByDescending(ed => ed.Id)
+                .Select(ed => new
                 {
-                    Id = reader.GetInt32(0),
-                    Amount = reader.GetInt32(1),
-                    Yyyymm = reader.GetString(2) // 日時型のカラムなら GetDateTime()
-                });
-            }
+                    ed.Id,
+                    Amount = ed.Amount ?? 0, // Nullable int を int に変換
+                    InputTime = ed.InputTime.HasValue ? ed.InputTime.Value.ToString("yyyy-MM-dd HH:mm:ss") : null // Nullable DateTime を string に変換
+                })
+                .ToListAsync();
 
-            return eatDetailRecord;
+            // ② DTO に変換
+            var eatDetailRecord = eatDetails.Select(ed => new EatDetailRecord
+            {
+                Id = ed.Id,
+                Amount = ed.Amount,
+                Yyyymm = ed.InputTime 
+            }).ToList();
+
+            return eatDetailRecord; // DTO を返す
         }
-
         /// <summary>
         /// 明細アップデート
         /// </summary>
@@ -97,15 +107,26 @@ namespace kajiApp_blazor.Components.ViewModel.EatDBC
         /// <returns></returns>
         public async Task UpdateEatDetailAsync(int id, int amount)
         {
-            using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText = "UPDATE eat_detail " +
-                                                    "SET amount = @amount " +
-                                                    "WHERE id = @id";
-            command.Parameters.AddWithValue("@amount", amount);
-            command.Parameters.AddWithValue("@id", id);
-            await command.ExecuteNonQueryAsync();
+            //引数idのレコードを取得 レコードは主キーなので1件しか存在しない想定
+            var eatDetail = await _context.EatDetails
+                                       .FirstOrDefaultAsync(e => e.Id == id);
+            if (eatDetail == null)
+            {
+                 // 該当レコードなし
+            }
+            eatDetail.Amount = amount;
+           
+            await _context.SaveChangesAsync(); // 更新をデータベースに適用
+            
+            //using var connection = new SqliteConnection(_connectionString);
+            //await connection.OpenAsync();
+            //var command = connection.CreateCommand();
+            //command.CommandText = "UPDATE eat_detail " +
+            //                                        "SET amount = @amount " +
+            //                                        "WHERE id = @id";
+            //command.Parameters.AddWithValue("@amount", amount);
+            //command.Parameters.AddWithValue("@id", id);
+            //await command.ExecuteNonQueryAsync();
         }
     }
 }
