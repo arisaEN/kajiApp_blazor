@@ -9,17 +9,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using kajiApp_blazor.Components.Entity;
 using Microsoft.EntityFrameworkCore;
+using AngleSharp.Diffing.Extensions;
 
 namespace kajiApp_blazor.Components.ViewModel.HomeDBC
 {
-
-
     /// <summary>
     /// 登録画面を作る
     /// </summary>
     public class TodayWorkRegistration
     {
-        private readonly string _connectionString = "Data Source=database.db";
         private readonly kajiappDBContext _context;
 
         public TodayWork FormModel { get; private set; } = new TodayWork();
@@ -47,55 +45,17 @@ namespace kajiApp_blazor.Components.ViewModel.HomeDBC
             //名前リスト
             // ① Entity を取得
             var nameLists =  _context.NameLists
-                .Select(n => new
-                {
-                    n.NameId,
-                    n.Name 
-                })
+                .Select(n => n.Name)
                 .ToList();
-            // ② NameList に追加
-            NameList.AddRange(nameLists.Select(n => n.Name));
+            NameList.AddRange(nameLists);
 
-           // //家事リスト
-           // // ① Entity を取得
-           // var workLists = _context.WorkLists
-           //     .Select(w => new
-           //     {
-           //         w.WorkId,
-           //         w.WorkName
-           //     })
-           //     .ToList();
-           // // ② NameList に追加
-           //WorkList.AddRange(workLists.Select(w => w.WorkName));
-
-            //using (var connection = new SQLiteConnection(_connectionString))
-            //{
-            //    connection.Open();
-
-            //    // NameListの取得
-            //    using (var command = new SQLiteCommand("SELECT name FROM nameList", connection))
-            //    using (var reader = command.ExecuteReader())
-            //    {
-            //        while (reader.Read())
-            //        {
-            //            NameList.Add(reader.GetString(0));
-            //        }
-            //    }
-
-            // WorkListの取得
-            //using (var command = new SQLiteCommand("SELECT work_id, workName FROM workList", connection))
-            //using (var reader = command.ExecuteReader())
-            //{
-            //    while (reader.Read())
-            //    {
-            //        WorkList.Add(new WorkItem(reader.GetInt32(0), reader.GetString(1)));
-            //    }
-            //}
-            //}
+            //家事リスト
+            // ① Entity を取得
+            var workLists = _context.WorkLists
+            .Select(w => new WorkItem(w.WorkId, w.WorkName))
+            .ToList();
+            WorkList.AddRange(workLists);
         }
-
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -117,25 +77,23 @@ namespace kajiApp_blazor.Components.ViewModel.HomeDBC
         {
             try
             {
-                using var connection = new SQLiteConnection(_connectionString);
-                await connection.OpenAsync();
+                var work = new Work
+                {
+                    Day = DateOnly.FromDateTime(FormModel.Day),
+                    Name = FormModel.Name,
+                    WorkId = FormModel.WorkId,
+                    Work1 = FormModel.WorkName, // WorkName → Work1 にマッピング
+                    Percent = FormModel.Percent.ToString()
+                };
 
-                using var command = new SQLiteCommand(
-                    "INSERT INTO works (day, name, work_id, work, percent) VALUES (@day, @name, @work_id, @work_name, @percent)",
-                    connection);
-                command.Parameters.AddWithValue("@day", FormModel.Day.ToString("yyyy-MM-dd"));
-                command.Parameters.AddWithValue("@name", FormModel.Name);
-                command.Parameters.AddWithValue("@work_id", FormModel.WorkId);
-                command.Parameters.AddWithValue("@work_name", FormModel.WorkName);
-                command.Parameters.AddWithValue("@percent", FormModel.Percent);
-
-                await command.ExecuteNonQueryAsync();
+                await _context.Works.AddAsync(work);
+                await _context.SaveChangesAsync();
 
                 Console.WriteLine("データを登録しました");
             }
-            catch (SQLiteException ex)
+            catch (DbUpdateException ex)
             {
-                Console.WriteLine($"SQLite エラー: {ex.Message}");
+                Console.WriteLine($"データベース更新エラー: {ex.Message}");
                 Console.WriteLine($"スタックトレース: {ex.StackTrace}");
             }
             catch (Exception ex)
@@ -144,6 +102,5 @@ namespace kajiApp_blazor.Components.ViewModel.HomeDBC
                 Console.WriteLine($"スタックトレース: {ex.StackTrace}");
             }
         }
-
     }
 }

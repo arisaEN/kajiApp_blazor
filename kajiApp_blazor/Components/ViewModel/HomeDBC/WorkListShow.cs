@@ -19,7 +19,6 @@ namespace kajiApp_blazor.Components.ViewModel.HomeDBC
         {
             _context = context;
         }
-
         public async Task<List<DTO.HomeModel.WorkList>> GetWorksAsync()
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
