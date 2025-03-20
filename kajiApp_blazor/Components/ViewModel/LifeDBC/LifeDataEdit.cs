@@ -4,7 +4,7 @@ using System.Diagnostics;
 using kajiApp_blazor.Components.DTO.LifeModel;
 using Microsoft.Data.Sqlite;
 using kajiApp_blazor.Components.ViewModel.LifeDBC;
-using kajiApp_blazor.Components.Entity;
+using kajiApp_blazor.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 
 namespace kajiApp_blazor.Components.ViewModel.LifeDBC

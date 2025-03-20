@@ -4,7 +4,7 @@ using kajiApp_blazor.Components.DTO.HomeModel;
 using Microsoft.Data.Sqlite;
 using kajiApp_blazor.Components.DTO;
 using Microsoft.EntityFrameworkCore;
-using kajiApp_blazor.Components.Entity;
+using kajiApp_blazor.Domain.Entity;
 
 
 

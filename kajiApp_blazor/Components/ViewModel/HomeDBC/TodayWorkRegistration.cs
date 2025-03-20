@@ -7,7 +7,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using kajiApp_blazor.Components.Entity;
+using kajiApp_blazor.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 using AngleSharp.Diffing.Extensions;
 

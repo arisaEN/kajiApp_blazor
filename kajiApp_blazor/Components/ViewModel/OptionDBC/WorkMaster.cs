@@ -1,7 +1,7 @@
 ﻿using System.Data.SQLite;
 using kajiApp_blazor.Components.DTO.HomeModel;
 using kajiApp_blazor.Components.DTO.OptionModel;
-using kajiApp_blazor.Components.Entity;
+using kajiApp_blazor.Domain.Entity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using kajiApp_blazor.Components.DTO.EatModel;
@@ -50,7 +50,7 @@ namespace kajiApp_blazor.Components.ViewModel.OptionDBC
         public async Task InsertWorkMasterAsync(WorkMasterList newWork)
         {
             //Entityモデルをnew 引数を代入する。
-            var workList = new Entity.WorkList
+            var workList = new Domain.Entity.WorkList
             {
                 WorkId = newWork.Id,
                 WorkName = newWork.WorkName,

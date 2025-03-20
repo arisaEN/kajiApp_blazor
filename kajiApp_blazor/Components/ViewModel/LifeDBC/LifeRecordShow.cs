@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Reflection.PortableExecutable;
 using kajiApp_blazor.Components.DTO.EatModel;
 using kajiApp_blazor.Components.DTO.LifeModel;
-using kajiApp_blazor.Components.Entity;
+using kajiApp_blazor.Domain.Entity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 

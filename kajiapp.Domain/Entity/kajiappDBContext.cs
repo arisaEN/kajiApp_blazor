@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace kajiApp_blazor.Components.Entity;
+namespace kajiApp_blazor.Domain.Entity;
 
 public partial class kajiappDBContext : DbContext
 {

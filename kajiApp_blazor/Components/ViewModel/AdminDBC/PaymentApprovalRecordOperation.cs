@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using kajiApp_blazor.Components.Entity;
+using kajiApp_blazor.Domain.Entity;
 
 
 namespace kajiApp_blazor.Components.ViewModel.AdminDBC

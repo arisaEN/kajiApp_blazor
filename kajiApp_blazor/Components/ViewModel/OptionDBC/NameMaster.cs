@@ -2,7 +2,7 @@
 using kajiApp_blazor.Components.DTO.OptionModel;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using kajiApp_blazor.Components.Entity;
+using kajiApp_blazor.Domain.Entity;
 using kajiApp_blazor.Components.DTO.EatModel;
 
 
