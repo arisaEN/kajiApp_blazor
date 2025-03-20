@@ -1,5 +1,5 @@
 ﻿
-@using kajiApp_blazor.Components.DTO.EatModel
+@using kajiApp_blazor.Infra.DTO.EatModel
 @using kajiApp_blazor.Components.ViewModel.EatDBC
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @implements IDisposable
@@ -100,7 +100,7 @@ else
 
 @code {
 
-    [Parameter] public List<DTO.EatModel.EatRecord>? eatrecord { get; set; } = new();
+    [Parameter] public List<Infra.DTO.EatModel.EatRecord>? eatrecord { get; set; } = new();
     [Inject] private HttpClient Http { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;
 

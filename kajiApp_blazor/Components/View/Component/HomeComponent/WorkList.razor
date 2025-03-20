@@ -52,7 +52,7 @@
 
 @code {
     //リストWorksに反応があるとUIに更新がかかる。
-    [Parameter] public List<DTO.HomeModel.WorkList>? worklist { get; set; }
+    [Parameter] public List<Infra.DTO.HomeModel.WorkList>? worklist { get; set; }
 
     [Inject] private HttpClient Http { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;

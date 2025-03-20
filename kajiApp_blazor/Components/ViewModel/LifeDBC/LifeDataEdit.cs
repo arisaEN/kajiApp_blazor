@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
-using kajiApp_blazor.Components.DTO.LifeModel;
+using kajiApp_blazor.Infra.DTO.LifeModel;
 using Microsoft.Data.Sqlite;
 using kajiApp_blazor.Components.ViewModel.LifeDBC;
 using kajiApp_blazor.Domain.Entity;
@@ -21,7 +21,7 @@ namespace kajiApp_blazor.Components.ViewModel.LifeDBC
         /// life明細更新
         /// </summary>
         /// <param name="record"></param>
-        public async Task UpdateEatDetailAsync(DTO.LifeModel.LifeRecord record)
+        public async Task UpdateEatDetailAsync(LifeRecord record)
         {
 
             //引数idのレコードを取得 レコードは主キーなので1件しか存在しない想定

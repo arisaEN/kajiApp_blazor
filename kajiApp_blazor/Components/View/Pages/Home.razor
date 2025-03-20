@@ -1,7 +1,7 @@
 ﻿@page "/"
 @using kajiApp_blazor.Components.ViewModel.HomeDBC
 @using kajiApp_blazor.Components.View.Component.HomeComponent
-@using kajiApp_blazor.Components.DTO.HomeModel
+@using kajiApp_blazor.Infra.DTO.HomeModel
 @using kajiApp_blazor.Components.ViewModel
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @using kajiApp_blazor.Components
@@ -10,6 +10,7 @@
 @inject HttpClient Http
 @inject IConfiguration Configuration
 @inject kajiappDBContext DbContext
+@using kajiApp_blazor.Infra.DTO
 
 <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
 <div class="container-fluid m-0 p-0 bg-black min-vh-100 text-white">
@@ -39,8 +40,8 @@
 
 @code {
     //フィールド初期化
-    private List<DTO.HomeModel.WorkList>? worklist = null;
-    private List<DTO.HomeModel.PointSummary>? pointsummary = null;
+    private List<kajiApp_blazor.Infra.DTO.HomeModel.WorkList>? worklist = null;
+    private List<kajiApp_blazor.Infra.DTO.HomeModel.PointSummary>? pointsummary = null;
     //インスタンス生成で入力フォームに使うNameListとWorkList作成
     private TodayWorkRegistration todayworkregistration;
 

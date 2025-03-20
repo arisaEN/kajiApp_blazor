@@ -1,4 +1,4 @@
-﻿namespace kajiApp_blazor.Components.DTO.AdminModel
+﻿namespace kajiApp_blazor.Infra.DTO.AdminModel
 {
     public class PaymentApprovalRecord
     {

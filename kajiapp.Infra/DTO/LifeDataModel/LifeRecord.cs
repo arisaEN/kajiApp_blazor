@@ -1,4 +1,4 @@
-﻿namespace kajiApp_blazor.Components.DTO.LifeModel
+﻿namespace kajiApp_blazor.Infra.DTO.LifeModel
 {
     public class LifeRecord
     {

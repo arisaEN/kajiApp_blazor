@@ -1,4 +1,4 @@
-﻿namespace kajiApp_blazor.Components.DTO.HomeModel
+﻿namespace kajiApp_blazor.Infra.DTO.HomeModel
 {
     public class WorkList
     {

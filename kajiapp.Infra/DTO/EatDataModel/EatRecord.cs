@@ -1,4 +1,4 @@
-﻿namespace kajiApp_blazor.Components.DTO.EatModel
+﻿namespace kajiApp_blazor.Infra.DTO.EatModel
 {
     public class EatRecord
     {

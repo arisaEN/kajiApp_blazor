@@ -1,6 +1,6 @@
 @page "/eat"
 @using kajiApp_blazor.Components.View.Component.EatComponent
-@using kajiApp_blazor.Components.DTO.EatModel
+@using kajiApp_blazor.Infra.DTO.EatModel
 @using kajiApp_blazor.Components.ViewModel.EatDBC
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @using kajiApp_blazor.Components
@@ -9,6 +9,7 @@
 @inject IConfiguration Configuration
 @inject kajiappDBContext DbContext
 @using kajiApp_blazor.Domain.Entity;
+@using kajiApp_blazor.Infra.DTO.EatModel
 
 
 <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
@@ -19,7 +20,7 @@
     <EatRecordList EatRecord="eatrecord" />
 </div>
 @code {
-    private List<DTO.EatModel.EatRecord>? eatrecord = new();
+    private List<Infra.DTO.EatModel.EatRecord>? eatrecord = new();
 
 
     //非同期で実績リスト取得

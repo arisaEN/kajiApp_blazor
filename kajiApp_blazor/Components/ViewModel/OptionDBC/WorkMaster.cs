@@ -1,10 +1,10 @@
 ﻿using System.Data.SQLite;
-using kajiApp_blazor.Components.DTO.HomeModel;
-using kajiApp_blazor.Components.DTO.OptionModel;
+using kajiApp_blazor.Infra.DTO.HomeModel;
+using kajiApp_blazor.Infra.DTO.OptionModel;
 using kajiApp_blazor.Domain.Entity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using kajiApp_blazor.Components.DTO.EatModel;
+using kajiApp_blazor.Infra.DTO.EatModel;
 
 
 namespace kajiApp_blazor.Components.ViewModel.OptionDBC

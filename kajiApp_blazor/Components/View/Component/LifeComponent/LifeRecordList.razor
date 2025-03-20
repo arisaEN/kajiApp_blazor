@@ -1,4 +1,4 @@
-﻿@using kajiApp_blazor.Components.DTO.LifeModel
+﻿@using kajiApp_blazor.Infra.DTO.LifeModel
 @using kajiApp_blazor.Components.ViewModel.LifeDBC
 @inject Blazored.Toast.Services.IToastService ToastService
 @inject kajiappDBContext DbContext
@@ -71,15 +71,15 @@
 </div>
 
 @code {
-    [Parameter] public List<DTO.LifeModel.LifeRecord>? liferecord { get; set; }
+    [Parameter] public List<kajiApp_blazor.Infra.DTO.LifeModel.LifeRecord>? liferecord { get; set; }
     [Inject] private HttpClient Http { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;
 
     private bool isLoading = false;
-    private DTO.LifeModel.LifeRecord? editRecord;
+    private Infra.DTO.LifeModel.LifeRecord? editRecord;
     private int editId , editRent, editWater, editElectricity, editGas;
 
-    private void EditRecord(DTO.LifeModel.LifeRecord record)
+    private void EditRecord(Infra.DTO.LifeModel.LifeRecord record)
     {
         editRecord = record;
         editId = record.Id;

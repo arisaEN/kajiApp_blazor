@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
-using kajiApp_blazor.Components.DTO.AdminModel;
-using kajiApp_blazor.Components.DTO.EatModel;
+using kajiApp_blazor.Infra.DTO.AdminModel;
+using kajiApp_blazor.Infra.DTO.EatModel;
 using kajiApp_blazor.Domain.Entity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;

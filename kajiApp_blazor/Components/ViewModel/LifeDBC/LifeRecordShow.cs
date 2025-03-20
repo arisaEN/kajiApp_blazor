@@ -2,8 +2,8 @@
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Reflection.PortableExecutable;
-using kajiApp_blazor.Components.DTO.EatModel;
-using kajiApp_blazor.Components.DTO.LifeModel;
+using kajiApp_blazor.Infra.DTO.EatModel;
+using kajiApp_blazor.Infra.DTO.LifeModel;
 using kajiApp_blazor.Domain.Entity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
