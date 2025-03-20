@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using kajiApp_blazor.Domain.Entity;
 
 
-namespace kajiApp_blazor.Components.ViewModel.AdminDBC
+namespace kajiApp_blazor.ViewModel.AdminDBC
 {
     public class PaymentApprovalRecordOperation
     {

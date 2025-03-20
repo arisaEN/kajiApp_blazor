@@ -11,7 +11,7 @@ using kajiApp_blazor.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 using AngleSharp.Diffing.Extensions;
 
-namespace kajiApp_blazor.Components.ViewModel.HomeDBC
+namespace kajiApp_blazor.ViewModel.HomeDBC
 {
     /// <summary>
     /// 登録画面を作る

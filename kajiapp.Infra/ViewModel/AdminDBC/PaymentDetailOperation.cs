@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using kajiApp_blazor.Domain.Entity;
 using kajiApp_blazor.Infra.DTO.EatModel;
 
-namespace kajiApp_blazor.Components.ViewModel.AdminDBC
+namespace kajiApp_blazor.ViewModel.AdminDBC
 {
     public class PaymentDetailOperation
     {

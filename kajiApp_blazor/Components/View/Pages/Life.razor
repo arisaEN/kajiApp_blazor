@@ -1,7 +1,7 @@
 ﻿@page "/life"
 @using kajiApp_blazor.Components.View.Component.LifeComponent
 @using kajiApp_blazor.Infra.DTO.LifeModel
-@using kajiApp_blazor.Components.ViewModel.LifeDBC
+@using kajiApp_blazor.ViewModel.LifeDBC
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @using kajiApp_blazor.Components
 @inject NavigationManager Navigation
@@ -33,7 +33,7 @@
     /// <returns></returns>
     private async Task LoadLifeAsync()
     {
-        var lifeRecordShow = new ViewModel.LifeDBC.LifeRecordShow(DbContext);
+        var lifeRecordShow = new LifeRecordShow(DbContext);
         liferecord = await lifeRecordShow.GetLifeAsync();
         if (liferecord != null)
         {
