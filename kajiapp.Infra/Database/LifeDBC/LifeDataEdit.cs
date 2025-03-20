@@ -3,11 +3,11 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using kajiApp_blazor.Infra.DTO.LifeModel;
 using Microsoft.Data.Sqlite;
-using kajiApp_blazor.ViewModel.LifeDBC;
+using kajiApp_blazor.Database.LifeDBC;
 using kajiApp_blazor.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace kajiApp_blazor.ViewModel.LifeDBC
+namespace kajiApp_blazor.Database.LifeDBC
 {
     public class LifeDataEdit
     {

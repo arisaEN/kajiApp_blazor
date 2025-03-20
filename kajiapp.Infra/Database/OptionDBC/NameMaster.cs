@@ -6,7 +6,7 @@ using kajiApp_blazor.Domain.Entity;
 using kajiApp_blazor.Infra.DTO.EatModel;
 
 
-namespace kajiApp_blazor.ViewModel.OptionDBC
+namespace kajiApp_blazor.Database.OptionDBC
 {
     public class NameMaster
     {

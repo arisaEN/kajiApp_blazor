@@ -1,7 +1,7 @@
 using Blazored.Toast;
 using kajiApp_blazor.Components;
-using kajiApp_blazor.ViewModel;
-using kajiApp_blazor.ViewModel.HomeDBC;
+using kajiApp_blazor.Database;
+using kajiApp_blazor.Database.HomeDBC;
 using kajiApp_blazor.Domain.Entity;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.EntityFrameworkCore;

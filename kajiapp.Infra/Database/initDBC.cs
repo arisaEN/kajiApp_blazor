@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SQLite;
 
-namespace kajiApp_blazor.ViewModel
+namespace kajiApp_blazor.Database
 {
     /// <summary>
     /// DBの初期化処理 月毎にその月のレコードがなければ生成

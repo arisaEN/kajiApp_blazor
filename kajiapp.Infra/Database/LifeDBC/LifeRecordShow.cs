@@ -9,7 +9,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace kajiApp_blazor.ViewModel.LifeDBC
+namespace kajiApp_blazor.Database.LifeDBC
 {
     public class LifeRecordShow
     {

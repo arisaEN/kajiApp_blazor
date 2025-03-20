@@ -8,7 +8,7 @@ using kajiApp_blazor.Domain.Entity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace kajiApp_blazor.ViewModel.AdminDBC
+namespace kajiApp_blazor.Database.AdminDBC
 
 {
     public class EatRecordShow
