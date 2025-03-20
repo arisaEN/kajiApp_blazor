@@ -21,3 +21,6 @@ docker-compose up -d
 docker build --no-cache -t kajid . -f kajiApp_blazor/Dockerfile
 
 docker run -d -p 2000:2001 --name kajid kajid
+
+
+docker run -d -p 2000:2001 --name kajid4 kajid4

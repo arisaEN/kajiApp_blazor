@@ -35,6 +35,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\kajiapp.Domain\kajiapp.Domain.csproj" />
+    <ProjectReference Include="..\kajiapp.Infra\kajiapp.Infra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="..\.dockerignore" Link="docker退避\.dockerignore" />
   </ItemGroup>
 
