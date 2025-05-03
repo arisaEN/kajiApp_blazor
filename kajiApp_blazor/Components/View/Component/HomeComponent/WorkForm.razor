@@ -7,7 +7,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @rendermode @(new InteractiveServerRenderMode(prerender:false))
 @inject IToastService ToastService
-
+@inject IJSRuntime JS
 
 
 <div class="card bg-dark text-white shadow-lg rounded">
@@ -85,6 +85,27 @@
         get { return todayworkregistration.FormModel; }
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var savedName = await JS.InvokeAsync<string>("cookieHelper.getCookie", "userName");
+                if (!string.IsNullOrWhiteSpace(savedName) &&
+                    todayworkregistration.NameList.Contains(savedName))
+                {
+                    FormModel.Name = savedName;
+                    StateHasChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Cookie 読み込みエラー: {ex.Message}");
+            }
+        }
+    }
+
 
     //登録ボタン
     private async Task HandleSubmit()
@@ -124,6 +145,7 @@
             FormModel.WorkId = default; // 家事IDもリセット
             // FormModel.Percent = default; 割合もリセット
             
+            await JS.InvokeVoidAsync("cookieHelper.setCookie", "userName", FormModel.Name, 365);
 
             // 状態変更を通知
             AppState.NotifyStateChanged();

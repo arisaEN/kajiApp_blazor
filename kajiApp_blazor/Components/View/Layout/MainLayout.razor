@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-
+@inject IJSRuntime JSRuntime
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -22,4 +22,29 @@
     <a class="dismiss">🗙</a>
 </div>
 
+<HeadContent>
+    <script src="js/cookieHelper.js"></script>
+</HeadContent>
 
+@code {
+    private bool scriptLoaded = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !scriptLoaded)
+        {
+            // cookieHelper.js を読み込ませる
+            await JSRuntime.InvokeVoidAsync("eval", @"
+                (function() {
+                    if (!window.cookieHelper) {
+                        var s = document.createElement('script');
+                        s.src = '/js/cookieHelper.js';
+                        s.async = false;
+                        document.head.appendChild(s);
+                    }
+                })();
+            ");
+            scriptLoaded = true;
+        }
+    }
+}
