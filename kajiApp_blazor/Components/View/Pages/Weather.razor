@@ -1,64 +1,30 @@
 ﻿@page "/weather"
-@attribute [StreamRendering]
+@inject kajiapp.Infra.Services.DiscordNotifier Notifier
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
 
-<PageTitle>Weather</PageTitle>
 
-<h1>Weather</h1>
+<h3>Discord 通知テスト</h3>
 
-<p>This component demonstrates showing data.</p>
+<button class="btn btn-primary" @onclick="SendTestNotification">通知を送る</button>
 
-@if (forecasts == null)
+@if (!string.IsNullOrEmpty(Status))
 {
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <p>@Status</p>
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private string? Status;
 
-    protected override async Task OnInitializedAsync()
+    private async Task SendTestNotification()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        try
         {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
-    }
-
-    private class WeatherForecast
-    {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+            await Notifier.SendAsync("🔔 通知テスト：Blazorボタンから送信しました！");
+            Status = "✅ 通知を送信しました！";
+        }
+        catch (Exception ex)
+        {
+            Status = $"❌ エラー: {ex.Message}";
+        }
     }
 }

@@ -1,4 +1,7 @@
+using System;
 using Blazored.Toast;
+using kajiapp.Infra.Repository;
+using kajiapp.Infra.Services;
 using kajiApp_blazor.Components;
 using kajiApp_blazor.Database;
 using kajiApp_blazor.Database.HomeDBC;
@@ -15,6 +18,11 @@ builder.Services.AddBlazoredToast();
 builder.Services.AddMudServices();
 
 builder.Services.AddDbContext<kajiappDBContext>();
+
+//ディスコード通知関係
+builder.Services.AddScoped<IWorkRepository, WorkRepository>();
+builder.Services.AddSingleton<DiscordNotifier>();
+builder.Services.AddHostedService<DailyWorkNotifier>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
