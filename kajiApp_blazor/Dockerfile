@@ -1,30 +1,43 @@
-# デバッグ コンテナーをカスタマイズする方法と、Visual Studio がこの Dockerfile を使用してより高速なデバッグのためにイメージをビルドする方法については、https://aka.ms/customizecontainer をご覧ください。
-
-# このステージは、VS から高速モードで実行するときに使用されます (デバッグ構成の既定値)
+# ベースランタイム
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
-# このステージは、サービス プロジェクトのビルドに使用されます
+# SDKイメージ（ビルド用）
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["kajiApp_blazor/kajiApp_blazor.csproj", "kajiApp_blazor/"]
-RUN dotnet restore "./kajiApp_blazor/kajiApp_blazor.csproj"
-COPY . .
-WORKDIR "/src/kajiApp_blazor"
-RUN dotnet build "./kajiApp_blazor.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# このステージは、最終ステージにコピーするサービス プロジェクトを公開するために使用されます
+# 各プロジェクトの .csproj をコピー
+COPY ["kajiApp_blazor/kajiApp_blazor.csproj", "kajiApp_blazor/"]
+COPY ["kajiapp.Domain/kajiapp.Domain.csproj", "kajiapp.Domain/"]
+COPY ["kajiapp.Infra/kajiapp.Infra.csproj", "kajiapp.Infra/"]
+
+# ✅ SQLite ファイルを Docker ビルド環境へコピー
+COPY "kajiApp_blazor/database.db" "./database.db"
+
+# パッケージ復元
+RUN dotnet restore "kajiApp_blazor/kajiApp_blazor.csproj"
+
+# ソースコードすべてコピー
+COPY . .
+
+# ビルド
+WORKDIR "/src/kajiApp_blazor"
+RUN dotnet build "kajiApp_blazor.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# パブリッシュ
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./kajiApp_blazor.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "kajiApp_blazor.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# このステージは、運用環境または VS から通常モードで実行している場合に使用されます (デバッグ構成を使用しない場合の既定)
+# 最終ステージ
 FROM base AS final
 WORKDIR /app
+
 COPY --from=publish /app/publish .
+COPY --from=build /src/database.db ./database.db
+
+# 実行
 ENTRYPOINT ["dotnet", "kajiApp_blazor.dll"]
