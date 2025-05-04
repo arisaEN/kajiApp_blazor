@@ -9,3 +9,22 @@ docker run -d -p 2000:2000 --name kajid kajid
 
 
 
+
+
+
+
+
+
+raspy
+
+
+docker build --no-cache -t kajiapp_blazor . -f kajiApp_blazor/Dockerfile
+docker run -d -p 8080:8080 --name kajiapp_blazor kajiapp_blazor
+
+
+docker images
+docker ps
+
+
+docker rm -f kajiapp_blazor
+docker image prune -a

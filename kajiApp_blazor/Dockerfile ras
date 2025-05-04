@@ -1,43 +1,43 @@
 # -----------------------
 # ベースランタイム（ラズパイ用 ARM64）
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-arm64v8 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 2000
-#EXPOSE 8080
-#EXPOSE 8081
+EXPOSE 8080
 
 # -----------------------
-# SDK イメージ（ビルド用）※ARM64
-FROM mcr.microsoft.com/dotnet/sdk:8.0-arm64v8 AS build
+# SDK（ビルド用）※ ARM64
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# プロジェクトファイルをコピー（順序重要）
+# プロジェクトファイルを個別にコピー（順序重要）
 COPY ["kajiApp_blazor/kajiApp_blazor.csproj", "kajiApp_blazor/"]
 COPY ["kajiapp.Domain/kajiapp.Domain.csproj", "kajiapp.Domain/"]
 COPY ["kajiapp.Infra/kajiapp.Infra.csproj", "kajiapp.Infra/"]
 
-# SQLite ファイルをビルド環境にコピー
+# SQLite データベースも一緒にコピー（パブリッシュ先に含める）
 COPY "kajiApp_blazor/database.db" "./database.db"
 
 # パッケージ復元
 RUN dotnet restore "kajiApp_blazor/kajiApp_blazor.csproj"
 
-# ソースコード全体をコピー
+# ソース全体コピー
 COPY . .
 
-# ビルド（ここで DLL が出る）
+# パブリッシュ（静的ファイル含む成果物を生成）
 WORKDIR "/src/kajiApp_blazor"
-RUN dotnet build "kajiApp_blazor.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet publish "kajiApp_blazor.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # -----------------------
-# 実行用ステージ（ビルド済DLLを使う）
+# 実行用ステージ
 FROM base AS final
 WORKDIR /app
 
-# ビルド成果物をコピー（DLL群）
-COPY --from=build /app/build ./
+# パブリッシュ成果物をコピー（← wwwroot, Razor, DLL含む）
+COPY --from=build /app/publish .
+
+# DBファイルも配置
 COPY --from=build /src/database.db ./database.db
 
-# アプリケーション実行
+# 起動
 ENTRYPOINT ["dotnet", "kajiApp_blazor.dll"]
