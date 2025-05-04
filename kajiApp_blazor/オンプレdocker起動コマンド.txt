@@ -1,4 +1,11 @@
 # 2025/2/27 これで動くけど　home eat lifeはDB通信失敗？型変換エラーおきる
 docker build --no-cache -t kajid . -f kajiApp_blazor/Dockerfile
 
-docker run -d -p 8080:8081 --name kajid kajid
+docker run -d -p 8080:8080 --name kajid kajid
+
+
+
+docker run -d -p 2000:2000 --name kajid kajid
+
+
+
