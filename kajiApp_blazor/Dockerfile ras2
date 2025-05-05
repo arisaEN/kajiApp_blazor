@@ -1,0 +1,39 @@
+# -----------------------
+# ベースランタイム（ラズパイ用 ARM64）
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 8080
+
+# -----------------------
+# SDK（ビルド用）※ ARM64
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+
+# プロジェクトファイルを個別にコピー（順序重要）
+COPY ["kajiApp_blazor/kajiApp_blazor.csproj", "kajiApp_blazor/"]
+COPY ["kajiapp.Domain/kajiapp.Domain.csproj", "kajiapp.Domain/"]
+COPY ["kajiapp.Infra/kajiapp.Infra.csproj", "kajiapp.Infra/"]
+
+# パッケージ復元
+RUN dotnet restore "kajiApp_blazor/kajiApp_blazor.csproj"
+
+# ソース全体コピー
+COPY . .
+
+# パブリッシュ（静的ファイル含む成果物を生成）
+WORKDIR "/src/kajiApp_blazor"
+RUN dotnet publish "kajiApp_blazor.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+# -----------------------
+# 実行用ステージ
+FROM base AS final
+WORKDIR /app
+
+# パブリッシュ成果物をコピー（← wwwroot, Razor, DLL含む）
+COPY --from=build /app/publish .
+
+
+
+# 起動
+ENTRYPOINT ["dotnet", "kajiApp_blazor.dll"]

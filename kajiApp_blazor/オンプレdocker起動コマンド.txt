@@ -18,13 +18,23 @@ docker run -d -p 2000:2000 --name kajid kajid
 raspy
 
 
-docker build --no-cache -t kajiapp_blazor . -f kajiApp_blazor/Dockerfile
+Åödocker build --no-cache -t kajiapp_blazor . -f kajiApp_blazor/Dockerfile
+
+Åödocker run -v "/home/pcmainte/project/kajiApp_blazor/kajiApp_blazor/database.db" -d -p 8080:8080 --name kajiapp_blazor kajiapp_blazor
+
 docker run -d -p 8080:8080 --name kajiapp_blazor kajiapp_blazor
 
-
+Å°ämîF
 docker images
 docker ps
 
-
+Å°çÌèú
 docker rm -f kajiapp_blazor
 docker image prune -a
+
+
+
+log
+docker logs kajiapp_blazor
+
+
