@@ -20,15 +20,33 @@ public class DailyWorkNotifier : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        ///テストモード
         if (_testMode)
         {
             _logger.LogInformation("🧪 [TESTモード] 即時実行します");
             await NotifyAsync();
         }
+        ///本番モード
         else
         {
             _logger.LogInformation("⏰ [PRODモード] スケジューラ開始（JST 7:00）");
 
+            //while (!stoppingToken.IsCancellationRequested)
+            //{
+            //    var now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Tokyo Standard Time");
+            //    var nextRun = now.Date.AddDays(now.Hour >= 7 ? 1 : 0).AddHours(7);
+            //    var delay = nextRun - now;
+
+            //    _logger.LogInformation($"次の実行は JST {nextRun}、{delay.TotalMinutes:F0} 分後");
+
+            //    await Task.Delay(delay, stoppingToken);
+
+            //    await NotifyAsync();
+
+            //    await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
+            //}
+
+            /// 7:00 JST に毎日実行するためのループに修正
             while (!stoppingToken.IsCancellationRequested)
             {
                 var now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Tokyo Standard Time");
@@ -37,11 +55,11 @@ public class DailyWorkNotifier : BackgroundService
 
                 _logger.LogInformation($"次の実行は JST {nextRun}、{delay.TotalMinutes:F0} 分後");
 
-                await Task.Delay(delay, stoppingToken);
+                await Task.Delay(delay, stoppingToken); // JST 7:00 まで待機
 
                 await NotifyAsync();
 
-                await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
+                // 次ループで再度「次のJST 7:00」を計算し直すので、ズレない
             }
         }
     }
