@@ -1,0 +1,26 @@
+[設計]
+なんちゃってドメイン駆動開発で設計。
+UI層
+infra層
+ドメイン層
+が存在しています。
+
+
+
+[docker運用方法]
+C:\Users\Root\Documents\GithubUpload\kajiApp_blazor
+
+このディレクトリから
+dockerimageを作成
+
+コマンドはこれ参照
+"C:\Users\Root\Documents\GithubUpload\kajiApp_blazor\kajiApp_blazor\オンプレdocker起動コマンド.txt"
+
+使うdockerfileは
+Dockerfile ras2
+Dockerfile win
+
+などのras2 winを消して実行。
+
+
+
